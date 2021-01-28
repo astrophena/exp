@@ -1,6 +1,8 @@
 // Command git-shell-commands implements the Git server SSH commands.
 //
 // See https://git-scm.com/docs/git-shell#_commands.
+//
+// TODO(astrophena): merge this into infra after the freeze ends.
 package main
 
 import (
