@@ -2,7 +2,8 @@
 //
 // See https://git-scm.com/docs/git-shell#_commands.
 //
-// TODO(astrophena): merge this into infra after the freeze ends.
+// This is the old version, new at
+// go.astrophena.name/infra/cmd/git-shell-commands.
 package main
 
 import (
