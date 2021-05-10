@@ -1,3 +1,4 @@
+// Command astroui is a very simple Windows GUI app.
 package main
 
 import (
