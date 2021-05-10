@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"runtime"
 	"strings"
 
 	"github.com/lxn/walk"
@@ -25,6 +27,12 @@ func main() {
 				Text: "SCREAM",
 				OnClicked: func() {
 					outTE.SetText(strings.ToUpper(inTE.Text()))
+				},
+			},
+			PushButton{
+				Text: "Go version",
+				OnClicked: func() {
+					outTE.SetText(fmt.Sprintf("%s, %s/%s", runtime.Version(), runtime.GOOS, runtime.GOARCH))
 				},
 			},
 		},

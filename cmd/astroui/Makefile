@@ -9,8 +9,7 @@ build: ## Build
 	@ GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -trimpath -ldflags=$(LDFLAGS)
 
 clean: ## Clean
-	@ rm *.exe
-	@ rm *.syso
+	@ rm *.exe *.syso
 
 help: ## Show help
 	@ grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
