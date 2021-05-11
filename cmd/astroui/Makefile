@@ -7,6 +7,7 @@ LDFLAGS = "-s -w -H windowsgui -buildid="
 build: ## Build
 	@ rsrc -manifest main.manifest
 	@ GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -trimpath -ldflags=$(LDFLAGS)
+	@ tailscale file cp astroui.exe phryne:
 
 clean: ## Clean
 	@ rm *.exe *.syso
