@@ -14,11 +14,13 @@ import (
 	"time"
 )
 
+// client is a Syncthing REST API client.
 type client struct {
 	url, key string
 	http     *http.Client
 }
 
+// newClient returns a new Syncthing REST API client.
 func newClient(url, key string) *client {
 	return &client{
 		url: url, key: key,
@@ -28,6 +30,7 @@ func newClient(url, key string) *client {
 	}
 }
 
+// version returns a Syncthing version.
 func (c *client) version() (string, error) {
 	type response struct {
 		Arch        string `json:"arch"`
@@ -49,6 +52,7 @@ func (c *client) version() (string, error) {
 	return fmt.Sprintf("Syncthing %s (%s/%s)", r.Version, r.OS, r.Arch), nil
 }
 
+// restart immediately restarts Syncthing.
 func (c *client) restart() error {
 	_, err := c.post("/rest/system/restart")
 	if err != nil {
@@ -57,6 +61,7 @@ func (c *client) restart() error {
 	return nil
 }
 
+// shutdown causes Syncthing to exit and not restart.
 func (c *client) shutdown() error {
 	_, err := c.post("/rest/system/shutdown")
 	if err != nil {
