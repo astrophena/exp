@@ -78,6 +78,8 @@ func onReady() {
 	}()
 }
 
+// loadConfig fetches URL and key that is used to contact Syncthing by
+// parsing it's config.
 func loadConfig() (url, key string, err error) {
 	// TODO(astrophena): Support non-default config paths.
 	dir := os.Getenv("LocalAppData")
