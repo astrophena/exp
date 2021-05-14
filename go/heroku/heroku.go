@@ -1,6 +1,6 @@
 // Package heroku provides functionality for deploying Heroku apps
 // (WIP).
-package heroku // import "go.astrophena.name/exp/heroku"
+package heroku
 
 import (
 	"archive/tar"

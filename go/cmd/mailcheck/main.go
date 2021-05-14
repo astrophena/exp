@@ -1,4 +1,6 @@
 // Command mailcheck is a simple mail checker.
+//
+// This code is merged into go.astrophena.name/infra/cmd/tgbotd.
 package main
 
 import (

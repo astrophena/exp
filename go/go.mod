@@ -1,4 +1,4 @@
-module go.astrophena.name/exp
+module go.astrophena.name/exp/go
 
 go 1.16
 

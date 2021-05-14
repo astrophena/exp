@@ -1,5 +1,5 @@
 // Package watchingtime fetches the watching time of YouTube videos.
-package watchingtime // import "go.astrophena.name/exp/watchingtime"
+package watchingtime
 
 import (
 	"fmt"
