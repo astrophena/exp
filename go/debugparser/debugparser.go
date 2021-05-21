@@ -3,10 +3,14 @@ package debugparser
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
+
+	_ "go.astrophena.name/infra/shared"
 )
 
 type Debug struct {
@@ -17,6 +21,8 @@ type Debug struct {
 }
 
 func Fetch(hostname string) (*Debug, error) {
+	log.Printf("#%v", reflect.TypeOf(http.DefaultTransport))
+
 	res, err := http.Get("https://" + hostname + "/_debug")
 	if err != nil {
 		return nil, err
@@ -24,15 +30,19 @@ func Fetch(hostname string) (*Debug, error) {
 	defer res.Body.Close()
 
 	d := &Debug{}
-
 	s := bufio.NewScanner(res.Body)
+
 	for s.Scan() {
 		a := strings.Split(s.Text(), "=")
 		if len(a) < 2 {
 			return nil, fmt.Errorf("invalid format of entry %q", s.Text())
 		}
+
 		a[1] = strings.TrimPrefix(a[1], `"`)
 		a[1] = strings.TrimSuffix(a[1], `"`)
+
+		var err error
+
 		switch a[0] {
 		case "service":
 			d.Service = a[1]
@@ -45,13 +55,13 @@ func Fetch(hostname string) (*Debug, error) {
 			}
 			d.Goroutines = int(c)
 		case "uptime":
-			dur, err := time.ParseDuration(a[1])
+			d.Uptime, err = time.ParseDuration(a[1])
 			if err != nil {
 				return nil, err
 			}
-			d.Uptime = dur
 		}
 	}
+
 	if err := s.Err(); err != nil {
 		return nil, err
 	}

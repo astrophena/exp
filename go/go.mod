@@ -10,7 +10,8 @@ require (
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
+	go.astrophena.name/infra v0.0.0-20210521164855-89bdfef53eee
 	gopkg.in/Knetic/govaluate.v3 v3.0.0 // indirect
-	tailscale.com v1.1.1-0.20210517200725-234cc87f48f5 // indirect
+	tailscale.com v1.1.1-0.20210517200725-234cc87f48f5
 	tawesoft.co.uk/go/dialog v0.0.0-20201103210221-4175697d086f
 )

@@ -11,5 +11,5 @@ func TestFetch(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log("#+v", d)
+	t.Logf("%#v", d)
 }
