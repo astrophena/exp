@@ -7,9 +7,11 @@ require (
 	github.com/emersion/go-imap v1.0.6
 	github.com/fatih/color v1.10.0
 	github.com/getlantern/systray v1.1.0
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/lxn/walk v0.0.0-20210112085537-c389da54e794
 	github.com/lxn/win v0.0.0-20210218163916-a377121e959e // indirect
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
+	github.com/zserge/metric v0.1.0 // indirect
 	go.astrophena.name/infra v0.0.0-20210521164855-89bdfef53eee
 	gopkg.in/Knetic/govaluate.v3 v3.0.0 // indirect
 	tailscale.com v1.1.1-0.20210517200725-234cc87f48f5

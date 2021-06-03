@@ -206,6 +206,7 @@ github.com/goreleaser/nfpm v1.1.10/go.mod h1:oOcoGRVwvKIODz57NUfiRwFWGfn00NXdgnn
 github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=
 github.com/gorilla/mux v1.6.2/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
 github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/gorilla/websocket v0.0.0-20170926233335-4201258b820c/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
 github.com/gorilla/websocket v1.4.0/go.mod h1:E7qHFY5m1UJ88s3WnNqhKjPHQ0heANvMoAMk2YaljkQ=
@@ -506,6 +507,8 @@ github.com/xlab/treeprint v1.0.0/go.mod h1:IoImgRak9i3zJyuxOKUP1v4UZd1tMoKkq/Cim
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
+github.com/zserge/metric v0.1.0 h1:IkYtSU/cSx7gnLZTJHrmblRtR3D4JVIvX7nnKELJT5U=
+github.com/zserge/metric v0.1.0/go.mod h1:SfdmUuuSJsSXW4W5sdU34LILvn+nHLufqIwNu22LW3c=
 go.astrophena.name/gen v0.10.0/go.mod h1:yE/xUkXZHafUd6jHyuTXSAB8XV1r9hz/3VdEjSm1yDE=
 go.astrophena.name/infra v0.0.0-20210521164855-89bdfef53eee h1:q4lsNZ85TwVN4GK0lRjq8R9WJtuCRNaYSiY5eDRoQKM=
 go.astrophena.name/infra v0.0.0-20210521164855-89bdfef53eee/go.mod h1:v24cDnpcMtmhQ30nsl7U2AGwN+jNn6xXmPVxGyLDXE8=
