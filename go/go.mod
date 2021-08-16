@@ -3,6 +3,7 @@ module go.astrophena.name/exp/go
 go 1.16
 
 require (
+	alexejk.io/go-xmlrpc v0.2.0 // indirect
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/emersion/go-imap v1.0.6
 	github.com/fatih/color v1.10.0
