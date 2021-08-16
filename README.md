@@ -1,5 +1,4 @@
-`exp` contains experimental things written in
-[C](https://en.wikipedia.org/wiki/C]), [Go](https://golang.org) and
-[Wren](https://wren.io).
+This repo contains experimental [Go](https://golang.org) packages and
+tools.
 
 Use them with discretion.
