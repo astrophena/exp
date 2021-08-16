@@ -1,5 +1,5 @@
-// Package watchingtime fetches the watching time of YouTube videos.
-package watchingtime
+// Package watchtime fetches the watch time of YouTube videos.
+package watchtime
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/senseyeio/duration"
 )
 
-// Fetch returns a watching time of YouTube video with the ID videoID.
+// Fetch returns a watch time of YouTube video with the supplied ID.
 func Fetch(videoID string) (time.Duration, error) {
 	url := "https://www.youtube.com/watch?v=" + videoID
 

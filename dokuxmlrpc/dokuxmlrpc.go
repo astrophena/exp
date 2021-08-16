@@ -5,10 +5,12 @@ import (
 	"alexejk.io/go-xmlrpc"
 )
 
+// Client is a DokuWiki XML-RPC API client.
 type Client struct {
 	*xmlrpc.Client
 }
 
+// NewClient returns a new Client.
 func NewClient(url string) (*Client, error) {
 	c, err := xmlrpc.NewClient(url + "/lib/exe/xmlrpc.php")
 	if err != nil {

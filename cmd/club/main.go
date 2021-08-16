@@ -1,3 +1,4 @@
+// club is the beginning of the Astrophena Club server.
 package main
 
 import (

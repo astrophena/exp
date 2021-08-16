@@ -1,4 +1,4 @@
-// Command renamer renames files sequentially.
+// renamer renames files sequentially.
 package main
 
 import (
