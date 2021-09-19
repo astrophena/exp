@@ -10,7 +10,7 @@ var c *Client
 
 func TestMain(m *testing.M) {
 	var err error
-	c, err = NewClient("https://wiki.internal.astrophena.name")
+	c, err = NewClient("https://wiki.astrophena.name")
 	if err != nil {
 		log.Fatalf("Failed to initialize client: %v", err)
 	}
