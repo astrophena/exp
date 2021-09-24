@@ -1,9 +1,7 @@
 // Package dokuxmlrpc is a DokuWiki XML-RPC API client.
 package dokuxmlrpc
 
-import (
-	"alexejk.io/go-xmlrpc"
-)
+import "alexejk.io/go-xmlrpc"
 
 // Client is a DokuWiki XML-RPC API client.
 type Client struct {
