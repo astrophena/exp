@@ -1,4 +1,4 @@
-module go.astrophena.name/exp
+module git.astrophena.name/exp
 
 go 1.17
 
