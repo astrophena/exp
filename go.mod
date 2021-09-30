@@ -1,6 +1,6 @@
 module git.astrophena.name/exp
 
-go 1.17
+go 1.18
 
 require (
 	alexejk.io/go-xmlrpc v0.2.0
