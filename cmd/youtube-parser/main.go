@@ -1,5 +1,5 @@
-// youtube-parser converts YouTube CSV playlist exports to HTML
-// files with thumbnails and links.
+// The youtube-parser binary converts YouTube CSV playlist exports to
+// HTML files with thumbnails and links.
 package main
 
 import (

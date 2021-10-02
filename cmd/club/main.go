@@ -1,4 +1,4 @@
-// club is the beginning of the Astrophena Club server.
+// The club binary is the beginning of the Astrophena Club server.
 package main
 
 import (
