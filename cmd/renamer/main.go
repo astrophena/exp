@@ -35,6 +35,11 @@ func rename(start int) filepath.WalkFunc {
 			newname  = fmt.Sprintf("%d%s", start, ext)
 		)
 
+		if basename == "desktop.ini" {
+			log.Printf("skipping desktop.ini")
+			return nil
+		}
+
 		log.Printf("renaming %s to %s", basename, newname)
 		if err := os.Rename(basename, newname); err != nil {
 			return err
