@@ -1,2 +1,5 @@
 *.exe
 *.syso
+
+__pycache__
+venv

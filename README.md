@@ -1,6 +1,5 @@
 # `exp`
 
-This repository contains experimental [Go](https://golang.org)
-packages and tools.
+This repository contains various experiments and trinkets.
 
 Use them with discretion and have fun!
