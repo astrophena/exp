@@ -7,8 +7,8 @@ import (
 
 func TestFetch(t *testing.T) {
 	var cases = []struct {
-		videoID  string
-		expected time.Duration
+		id   string
+		want time.Duration
 	}{
 		{"HLrqNhgdiC0", (6 * time.Minute) + (20 * time.Second)},
 		{"LZa5KKfqHtA", (5 * time.Minute) + (41 * time.Second)},
@@ -17,13 +17,15 @@ func TestFetch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		result, err := Fetch(tc.videoID)
-		if err != nil {
-			t.Errorf("Got an error when fetching %q: %v", tc.videoID, err)
-		}
+		t.Run(tc.id, func(t *testing.T) {
+			got, err := Fetch(tc.id)
+			if err != nil {
+				t.Fatalf("Got an error when fetching %q: %v", tc.id, err)
+			}
 
-		if tc.expected != result {
-			t.Errorf(`Unexpected result, got %v for duration %q`, result, tc.expected)
-		}
+			if tc.want != got {
+				t.Fatalf(`got %v, want %q`, got, tc.want)
+			}
+		})
 	}
 }
