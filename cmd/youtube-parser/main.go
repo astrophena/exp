@@ -7,7 +7,7 @@
 //
 // Run this:
 //
-//  $ go run git.astrophena.name/exp/cmd/youtube-parser -title [page title] [path to CSV file] [path to generated HTML]
+//  $ go run git.astrophena.name/exp/cmd/youtube-parser@latest -title [page title] [path to CSV file]
 package main
 
 import (
@@ -20,6 +20,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 
 	"github.com/neilotoole/errgroup"
 )
@@ -42,11 +44,14 @@ func main() {
 	title := flag.String("title", "Videos", "Page title.")
 	flag.Parse()
 
-	if len(flag.Args()) < 2 {
-		log.Fatal("Path to CSV and the result files is required.")
+	if len(flag.Args()) < 1 {
+		log.Fatal("Path to the CSV file is required.")
 	}
 	from := flag.Args()[0]
-	to := flag.Args()[1]
+	if filepath.Ext(from) != ".csv" {
+		log.Fatalf("Input file should have '.csv' extension.")
+	}
+	to := strings.TrimSuffix(from, ".csv") + ".html"
 
 	f, err := os.Open(from)
 	if err != nil {
