@@ -5,6 +5,8 @@
 //
 // Usage
 //
+// Run this:
+//
 //  $ go run git.astrophena.name/exp/cmd/youtube-parser -title [page title] [path to CSV file] [path to generated HTML]
 package main
 
