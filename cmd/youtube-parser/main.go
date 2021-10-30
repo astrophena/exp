@@ -1,5 +1,11 @@
 // The youtube-parser binary converts YouTube CSV playlist exports to
 // HTML files with thumbnails and links.
+//
+// youtube-dl (https://youtube-dl.org) should be installed to run this.
+//
+// Usage
+//
+//  $ go run git.astrophena.name/exp/cmd/youtube-parser -title [page title] [path to CSV file] [path to generated HTML]
 package main
 
 import (
