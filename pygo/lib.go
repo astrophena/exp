@@ -1,3 +1,12 @@
+// This is an example of a Python program interacting with the Go
+// library.
+//
+// Hacking
+//
+// Run this:
+//
+//  $ make
+//  $ python prog.py
 package main
 
 import "C"
