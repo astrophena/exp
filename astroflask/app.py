@@ -23,4 +23,7 @@ def ua():
 
 @app.route('/sysinfo', methods=['GET'])
 def sysinfo():
-    return render_template('sysinfo.html', uname=f'{os.uname()}')
+    uname = os.uname()
+    if request.args.get('format') == 'json':
+        return {'uname': str(uname)}
+    return render_template('sysinfo.html', uname=str(uname))
