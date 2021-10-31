@@ -25,5 +25,12 @@ def ua():
 def sysinfo():
     uname = os.uname()
     if request.args.get('format') == 'json':
-        return {'uname': str(uname)}
-    return render_template('sysinfo.html', uname=str(uname))
+        return {
+            # https://docs.python.org/3/library/os.html#os.uname
+            'sysname': uname.sysname,
+            'nodename': uname.nodename,
+            'release': uname.release,
+            'version': uname.version,
+            'machine': uname.machine,
+        }
+    return render_template('sysinfo.html', uname=uname)

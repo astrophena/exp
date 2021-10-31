@@ -5,5 +5,26 @@
 {% block main %}
 <h1>System info</h1>
 
-<pre><code>{{ uname }}</code></pre>
+<p>See <a href="https://docs.python.org/3/library/os.html#os.uname">Python documentation</a> for meaning of these fields.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Sysname</td>
+      <td><code>{{ uname.sysname }}</code></td>
+    </tr>
+    <tr>
+      <td>Nodename</td>
+      <td><code>{{ uname.nodename }}</code></td>
+    </tr>
+    <tr>
+      <td>Release</td>
+      <td><code>{{ uname.release }}</code></td>
+    </tr>
+    <tr>
+      <td>Machine</td>
+      <td><code>{{ uname.machine }}</code></td>
+    </tr>
+  </tbody>
+</table>
 {% endblock %}
