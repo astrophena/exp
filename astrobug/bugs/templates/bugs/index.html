@@ -1,0 +1,18 @@
+{% load humanize %}
+
+<h1>Bugs</h1>
+
+{% if bugs %}
+  <table>
+    <tbody>
+      {% for bug in bugs %}
+        <tr>
+          <td><small><a href="{% url 'detail' bug.id %}">#{{bug.id}}</a> {{ bug.state }}</small> {{ bug.title }}</td>
+          <td><i>by {{ bug.owner }} {{ bug.created_at|naturaltime }}</i></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No bugs.</p>
+{% endif %}
