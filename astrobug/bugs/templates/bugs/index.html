@@ -1,5 +1,9 @@
+{% extends 'base.html' %}
 {% load humanize %}
 
+{% block title %}Bugs{% endblock %}
+
+{% block main %}
 <h1>Bugs</h1>
 
 {% if bugs %}
@@ -7,7 +11,8 @@
     <tbody>
       {% for bug in bugs %}
         <tr>
-          <td><small><a href="{% url 'detail' bug.id %}">#{{bug.id}}</a> {{ bug.state }}</small> {{ bug.title }}</td>
+          <td><i>{{ bug.get_state_display }}</i></td>
+          <td><a href="{% url 'bugs:detail' bug.id %}">#{{bug.id}}</a> — {{ bug.title }}</td>
           <td><i>by {{ bug.owner }} {{ bug.created_at|naturaltime }}</i></td>
         </tr>
       {% endfor %}
@@ -16,3 +21,4 @@
 {% else %}
   <p>No bugs.</p>
 {% endif %}
+{% endblock %}
