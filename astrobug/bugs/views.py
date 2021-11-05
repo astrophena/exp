@@ -1,11 +1,15 @@
-from django.shortcuts import get_object_or_404, render
+from django.views import generic
 
 from .models import Bug
 
-def index(request):
-    bugs = Bug.objects.order_by('-created_at')[:5]
-    return render(request, 'bugs/index.html', {'bugs': bugs})
+class IndexView(generic.ListView):
+    template_name = 'bugs/index.html'
+    context_object_name = 'bugs'
 
-def detail(request, bug_id):
-    bug = get_object_or_404(Bug, pk=bug_id)
-    return render(request, 'bugs/detail.html', {'bug': bug})
+    def get_queryset(self):
+        """Return all bugs."""
+        return Bug.objects.order_by('created_at')
+
+class DetailView(generic.DetailView):
+    model = Bug
+    template_name = 'bugs/detail.html'
