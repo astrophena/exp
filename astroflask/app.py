@@ -21,6 +21,15 @@ def ua():
     response.mimetype = 'text/plain'
     return response
 
+@app.route('/dump-request', methods=['GET'])
+def dump_request():
+    return {
+        'endpoint': request.endpoint,
+        'remote_addr': request.remote_addr,
+        'method': request.method,
+        'headers': dict(request.headers),
+    }
+
 @app.route('/sysinfo', methods=['GET'])
 def sysinfo():
     uname = os.uname()
