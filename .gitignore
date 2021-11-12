@@ -1,5 +1,6 @@
 *.exe
 *.syso
+/cmd/tsproxy/tsproxy
 
 db.sqlite3
 __pycache__
