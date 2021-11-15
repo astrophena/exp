@@ -28,8 +28,8 @@ func Version() *C.char {
 
 //export WatchTime
 func WatchTime(id *C.char) *C.char {
-	goId := C.GoString(id)
-	t, err := watchtime.Fetch(goId)
+	goID := C.GoString(id)
+	t, err := watchtime.Fetch(goID)
 	if err != nil {
 		return C.CString(err.Error())
 	}
