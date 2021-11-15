@@ -1,3 +1,5 @@
+// The tsproxy binary is the simple reverse proxy that listens directly on the
+// Tailscale network.
 package main
 
 import (
