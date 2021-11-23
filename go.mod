@@ -15,6 +15,7 @@ require (
 require tailscale.com v1.16.2
 
 require (
+	github.com/alexandrevicenzi/go-sse v1.6.0 // indirect
 	github.com/alexbrainman/sspi v0.0.0-20210105120005-909beea2cc74 // indirect
 	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/coreos/go-iptables v0.6.0 // indirect
