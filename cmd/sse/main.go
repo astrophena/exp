@@ -1,3 +1,5 @@
+// The sse binary is an example of using Server Sent Events (SSE) from Go
+// together with the htmx JavaScript library.
 package main
 
 import (
