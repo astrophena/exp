@@ -398,3 +398,22 @@ pre code {
 li {
   margin: 8px;
 }
+
+.flash {
+  padding: 10px 0;
+  text-align: center;
+  color: #FFF;
+	display: block;
+}
+
+.flash a {
+  color: #FFF;
+}
+
+.flash--notice {
+  background-color: #267923;
+}
+
+.flash--alert {
+  background-color: #871F22;
+}
