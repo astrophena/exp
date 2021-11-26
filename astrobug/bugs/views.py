@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import Bug
 
+
 class IndexView(generic.ListView):
     template_name = "bugs/index.html"
     context_object_name = "bugs"
@@ -10,6 +11,7 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         """Return all bugs."""
         return Bug.objects.order_by("created_at")
+
 
 class DetailView(generic.DetailView):
     model = Bug
