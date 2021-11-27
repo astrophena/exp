@@ -1,5 +1,4 @@
 from django.views import generic
-from django.contrib.auth.decorators import login_required
 
 from .models import Bug
 
