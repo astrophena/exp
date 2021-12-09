@@ -11,13 +11,17 @@ import (
 	"net/url"
 	"os"
 
+	"git.astrophena.name/infra/cmd"
+
 	"tailscale.com/client/tailscale"
 	"tailscale.com/tsnet"
 	"tailscale.com/types/logger"
 )
 
 func main() {
-	log.SetFlags(0)
+	cmd.SetDescription("Simple reverse proxy that listens directly on the Tailscale network.")
+	cmd.HandleStartup()
+
 	var (
 		hostname = flag.String("hostname", "tsproxy", "Hostname to use.")
 		upstream = flag.String("upstream", "http://localhost:3000", "URL to proxy.")
