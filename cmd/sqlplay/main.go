@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	"git.astrophena.name/infra/cmd"
 	"git.astrophena.name/infra/version"
 	"git.astrophena.name/infra/web"
 
@@ -32,11 +33,10 @@ import (
 var tpl string
 
 func main() {
-	log.SetFlags(0)
-
 	addr := flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
 	dbPath := flag.String("db", "", "Path to the SQLite database.")
-	flag.Parse()
+	cmd.SetDescription("SQL playground (so people can write queries & share them).")
+	cmd.HandleStartup()
 
 	if *dbPath == "" {
 		log.Fatal("Set the -db flag to the SQLite database path.")
