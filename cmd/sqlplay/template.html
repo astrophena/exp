@@ -1,0 +1,40 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SQL Playground</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style nonce="{{ .Nonce }}">
+      textarea {
+        font-family: "Fira Code", monospace;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>SQL Playground</h1>
+      <nav>
+        {{ if .Query }}
+        <a href="/">Clear</a>
+        {{ end }}
+        <a href="/schema">Schema</a>
+      </nav>
+    </header>
+    <main>
+      <p>Using database <code>{{ .DBPath }}</code>.</p>
+      <form method="GET">
+        <textarea name="query" rows="5" cols="80">{{ .Query }}</textarea>
+        <input type="submit" value="Query" />
+      </form>
+
+      {{ if .Query }}
+      <p><i>Took {{ .Duration }}.</i></p>
+      {{ .Table }}
+      {{ end }}
+    </main>
+  </body>
+  <footer>
+    This is <strong>{{ cmdName }}</strong> in <strong>{{ env }}</strong>.
+  </footer>
+</html>

@@ -6,20 +6,30 @@
 package main
 
 import (
+	"bytes"
+	"crypto/rand"
 	"database/sql"
+	_ "embed"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"html"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
+	"git.astrophena.name/infra/version"
 	"git.astrophena.name/infra/web"
 
 	_ "modernc.org/sqlite"
 )
+
+//go:embed template.html
+var tpl string
 
 func main() {
 	log.SetFlags(0)
@@ -37,11 +47,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	s := &server{db: db, dbPath: *dbPath}
+	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
+		"cmdName": func() string {
+			return version.CmdName()
+		},
+		"env": func() string {
+			return version.Env
+		},
+	}).Parse(tpl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	mux := http.NewServeMux()
-	mux.Handle("/", &server{db: db, dbPath: *dbPath})
+	mux.Handle("/", s)
 	schemaQuery := url.Values{}
 	// https://stackoverflow.com/a/6617764
-	schemaQuery.Set("q", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
+	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
 
 	web.ListenAndServe(&web.ListenAndServeConfig{
@@ -56,6 +79,7 @@ func main() {
 type server struct {
 	db     *sql.DB
 	dbPath string
+	tpl    *template.Template
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -64,54 +88,29 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sql := r.FormValue("q")
-	fmt.Fprintf(w, `<html>
-<head><style>
+	nonce := generateRandomString(16)
+	w.Header().Set("Content-Security-Policy", fmt.Sprintf("default-src 'self'; style-src 'self' 'nonce-%s'", nonce))
 
-tr:nth-child(even){background-color: #f2f2f2;}
+	query := r.FormValue("query")
 
-td, th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-table {
-    border-collapse: collapse;
-    width: 100%%;
-}
-
-tr:hover {background-color: #ddd;}
-
-th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #04AA6D;
-  color: white;
-}
-
-</style></head>
-<body>
-   <h1>SQL Playground</h1>
-	 <p>Using database <code>%s</code>.</p>
-	 <form method=GET>
-   <textarea name="q" rows="5" cols="80" style='width: 100%%'>%s</textarea>
-   <p><input type="submit" value="Query"> [<a href="/schema">Schema</a>]</p>
-   </form>
-</body>`, s.dbPath, html.EscapeString(sql))
-
-	if sql != "" {
-		rows, err := s.db.Query(sql)
+	var dur time.Duration
+	var tb strings.Builder
+	if query != "" {
+		start := time.Now()
+		rows, err := s.db.Query(query)
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			web.Error(w, r, err)
 			return
 		}
-		io.WriteString(w, `<html><body><table><tr>`)
+		done := time.Now()
+		dur = done.Sub(start)
+
+		io.WriteString(&tb, `<table><tr>`)
 		cols, _ := rows.Columns()
 		for _, c := range cols {
-			fmt.Fprintf(w, "<th>%s</th>\n", html.EscapeString(c))
+			fmt.Fprintf(&tb, "<th>%s</th>\n", html.EscapeString(c))
 		}
-		io.WriteString(w, `</tr>`)
+		io.WriteString(&tb, `</tr>`)
 
 		for rows.Next() {
 			val := make([]interface{}, len(cols))
@@ -120,20 +119,33 @@ th {
 				valPtr[i] = &val[i]
 			}
 			if err := rows.Scan(valPtr...); err != nil {
-				http.Error(w, err.Error(), 500)
+				web.Error(w, r, err)
 				return
 			}
-			io.WriteString(w, `<tr>`)
+			io.WriteString(&tb, `<tr>`)
 
 			for _, v := range val {
-				fmt.Fprintf(w, "<td>%s</td>\n", colHTML(v))
+				fmt.Fprintf(&tb, "<td>%s</td>\n", colHTML(v))
 			}
-			io.WriteString(w, "</tr>\n")
+			io.WriteString(&tb, "</tr>\n")
 		}
-		io.WriteString(w, "</table>\n")
-		return
+		io.WriteString(&tb, "</table>\n")
 	}
 
+	d := struct {
+		Duration time.Duration
+		Nonce    string
+		DBPath   string
+		Query    string
+		Table    template.HTML
+	}{dur, nonce, s.dbPath, query, template.HTML(tb.String())}
+
+	var buf bytes.Buffer
+	if err := s.tpl.Execute(&buf, d); err != nil {
+		web.Error(w, r, err)
+		return
+	}
+	buf.WriteTo(w)
 }
 
 func colFmt(v interface{}) string {
@@ -154,4 +166,19 @@ func colHTML(v interface{}) string {
 		return fmt.Sprintf("<a href=\"https://dashboard.stripe.com/customers/%s\" rel=\"noopener noreferrer\">%s</a>", h, h)
 	}
 	return h
+}
+
+// generateRandomBytes returns random bytes.
+func generateRandomBytes(size int) []byte {
+	b := make([]byte, size)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
+
+	return b
+}
+
+// generateRandomString returns a random string.
+func generateRandomString(size int) string {
+	return base64.URLEncoding.EncodeToString(generateRandomBytes(size))
 }
