@@ -3,6 +3,10 @@
 //
 // Stolen from
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
+//
+// It's available on http://infra:6969.
+//
+// TODO(astrophena): Expose it on https://sqlplay.astrophena.name.
 package main
 
 import (
