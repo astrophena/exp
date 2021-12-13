@@ -95,50 +95,53 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var dur time.Duration
 	var tb strings.Builder
+	var queryErr error
 	if query != "" {
 		start := time.Now()
 		rows, err := s.db.Query(query)
 		if err != nil {
-			web.Error(w, r, err)
-			return
+			queryErr = err
 		}
 		done := time.Now()
 		dur = done.Sub(start)
 
-		io.WriteString(&tb, `<table><tr>`)
-		cols, _ := rows.Columns()
-		for _, c := range cols {
-			fmt.Fprintf(&tb, "<th>%s</th>\n", html.EscapeString(c))
-		}
-		io.WriteString(&tb, `</tr>`)
+		if rows != nil {
+			io.WriteString(&tb, `<table><tr>`)
+			cols, _ := rows.Columns()
+			for _, c := range cols {
+				fmt.Fprintf(&tb, "<th>%s</th>\n", html.EscapeString(c))
+			}
+			io.WriteString(&tb, `</tr>`)
 
-		for rows.Next() {
-			val := make([]interface{}, len(cols))
-			valPtr := make([]interface{}, len(cols))
-			for i := range cols {
-				valPtr[i] = &val[i]
-			}
-			if err := rows.Scan(valPtr...); err != nil {
-				web.Error(w, r, err)
-				return
-			}
-			io.WriteString(&tb, `<tr>`)
+			for rows.Next() {
+				val := make([]interface{}, len(cols))
+				valPtr := make([]interface{}, len(cols))
+				for i := range cols {
+					valPtr[i] = &val[i]
+				}
+				if err := rows.Scan(valPtr...); err != nil {
+					web.Error(w, r, err)
+					return
+				}
+				io.WriteString(&tb, `<tr>`)
 
-			for _, v := range val {
-				fmt.Fprintf(&tb, "<td>%s</td>\n", colHTML(v))
+				for _, v := range val {
+					fmt.Fprintf(&tb, "<td>%s</td>\n", colHTML(v))
+				}
+				io.WriteString(&tb, "</tr>\n")
 			}
-			io.WriteString(&tb, "</tr>\n")
+			io.WriteString(&tb, "</table>\n")
 		}
-		io.WriteString(&tb, "</table>\n")
 	}
 
 	d := struct {
+		QueryErr error
 		Duration time.Duration
 		Nonce    string
 		DBPath   string
 		Query    string
 		Table    template.HTML
-	}{dur, nonce, s.dbPath, query, template.HTML(tb.String())}
+	}{queryErr, dur, nonce, s.dbPath, query, template.HTML(tb.String())}
 
 	var buf bytes.Buffer
 	if err := s.tpl.Execute(&buf, d); err != nil {

@@ -9,6 +9,21 @@
         font-family: "Fira Code", monospace;
         width: 100%;
       }
+
+      .flash {
+        padding: 10px 0;
+        text-align: center;
+        color: #fff;
+        display: block;
+      }
+
+      .flash a {
+        color: #fff;
+      }
+
+      .flash--alert {
+        background-color: #871f22;
+      }
     </style>
   </head>
   <body>
@@ -29,8 +44,13 @@
       </form>
 
       {{ if .Query }}
+      {{ if .QueryErr }}
+      <div class="flash flash--alert">{{ .QueryErr }}</div>
+      {{ end }}
+      {{ if .Table }}
       <p><i>Took {{ .Duration }}.</i></p>
       {{ .Table }}
+      {{ end }}
       {{ end }}
     </main>
   </body>
