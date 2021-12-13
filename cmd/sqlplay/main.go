@@ -47,6 +47,7 @@ func main() {
 		log.Fatal("Failed to initialize the server: %v", err)
 	}
 
+	log.Printf("Using database %s.", s.dbPath)
 	web.ListenAndServe(&web.ListenAndServeConfig{
 		Mux:  s.mux,
 		Addr: *addr,
