@@ -40,7 +40,7 @@
     <main>
       <p>Using database <code>{{ .DBPath }}</code>.</p>
       <form method="GET">
-        <textarea name="query" rows="5" cols="80">{{ .Query }}</textarea>
+        <textarea name="query" rows="5" cols="80" placeholder="Enter your query...">{{ .Query }}</textarea>
         <input type="submit" value="Query" />
       </form>
 
