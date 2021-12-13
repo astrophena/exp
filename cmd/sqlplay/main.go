@@ -80,6 +80,7 @@ func newServer(dbPath string) (*server, error) {
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
+	s.mux.Handle("/about", http.RedirectHandler("https://godoc.astrophena.name/pkg/git.astrophena.name/exp/cmd/sqlplay/", http.StatusFound))
 
 	return s, nil
 }
@@ -144,12 +145,10 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	d := struct {
-		QueryErr error
-		Duration time.Duration
-		Nonce    string
-		DBPath   string
-		Query    string
-		Table    template.HTML
+		QueryErr             error
+		Duration             time.Duration
+		Nonce, DBPath, Query string
+		Table                template.HTML
 	}{queryErr, dur, nonce, s.dbPath, query, template.HTML(tb.String())}
 
 	var buf bytes.Buffer
