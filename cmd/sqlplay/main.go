@@ -1,12 +1,6 @@
 // The sqlplay binary is a little internal tool that's like the Go playground
-// but for SQL queries (so people can write queries & share them).
-//
-// Stolen from
+// but for SQL queries (so people can write queries & share them). It's based on
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
-//
-// It's available on http://infra:6969.
-//
-// TODO(astrophena): Expose it on https://sqlplay.astrophena.name.
 package main
 
 import (
@@ -37,56 +31,67 @@ import (
 var tpl string
 
 func main() {
-	addr := flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
-	dbPath := flag.String("db", "", "Path to the SQLite database.")
-	cmd.SetDescription("SQL playground (so people can write queries & share them).")
+	var (
+		addr   = flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
+		dbPath = flag.String("db", "", "Path to the SQLite database.")
+	)
+	cmd.SetDescription("SQL playground.")
 	cmd.HandleStartup()
 
 	if *dbPath == "" {
 		log.Fatal("Set the -db flag to the SQLite database path.")
 	}
 
-	db, err := sql.Open("sqlite", *dbPath)
+	s, err := newServer(*dbPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Failed to initialize the server: %v", err)
 	}
 
-	s := &server{db: db, dbPath: *dbPath}
-	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
-		"cmdName": func() string {
-			return version.CmdName()
+	web.ListenAndServe(&web.ListenAndServeConfig{
+		Mux:  s.mux,
+		Addr: *addr,
+		OnShutdown: func() {
+			s.db.Close()
 		},
+	})
+}
+
+func newServer(dbPath string) (*server, error) {
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		return nil, err
+	}
+
+	s := &server{db: db, dbPath: dbPath}
+
+	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
+		"cmdName": version.CmdName,
 		"env": func() string {
 			return version.Env
 		},
 	}).Parse(tpl)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	mux := http.NewServeMux()
-	mux.Handle("/", s)
+	s.mux = http.NewServeMux()
+	s.mux.HandleFunc("/", s.serve)
 	schemaQuery := url.Values{}
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
-	mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
+	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
 
-	web.ListenAndServe(&web.ListenAndServeConfig{
-		Mux:  mux,
-		Addr: *addr,
-		OnShutdown: func() {
-			db.Close()
-		},
-	})
+	return s, nil
 }
 
 type server struct {
 	db     *sql.DB
 	dbPath string
+	mux    *http.ServeMux
 	tpl    *template.Template
 }
 
-func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		web.NotFound(w, r)
 		return
@@ -169,9 +174,6 @@ func colFmt(v interface{}) string {
 func colHTML(v interface{}) string {
 	s := colFmt(v)
 	h := html.EscapeString(s)
-	if strings.HasPrefix(s, "cus_") {
-		return fmt.Sprintf("<a href=\"https://dashboard.stripe.com/customers/%s\" rel=\"noopener noreferrer\">%s</a>", h, h)
-	}
 	return h
 }
 
