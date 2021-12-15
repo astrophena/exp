@@ -134,8 +134,7 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 					valPtr[i] = &val[i]
 				}
 				if err := rows.Scan(valPtr...); err != nil {
-					web.Error(w, r, err)
-					return
+					queryErr = err
 				}
 				io.WriteString(&tb, `<tr>`)
 
@@ -177,7 +176,26 @@ func colFmt(v interface{}) string {
 func colHTML(v interface{}) string {
 	s := colFmt(v)
 	h := html.EscapeString(s)
+	// Convert valid URLs into links.
+	if isValidURL(s) {
+		return fmt.Sprintf(`<a href="%[1]s" rel="noopener noreferrer">%[1]s</a>`, s)
+	}
 	return h
+}
+
+// isValidURL tests a string to determine if it is a well-structured URL or not.
+func isValidURL(toTest string) bool {
+	_, err := url.ParseRequestURI(toTest)
+	if err != nil {
+		return false
+	}
+
+	u, err := url.Parse(toTest)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return false
+	}
+
+	return true
 }
 
 // generateRandomBytes returns random bytes.
