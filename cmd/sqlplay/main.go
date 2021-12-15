@@ -7,8 +7,6 @@
 //  SELECT 'https://youtube.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
 //
 // Or visit http://infra:6969/?query=SELECT+%27https%3A%2F%2Fyoutube.com%2Fembed%2F%27+%7C%7C+id+AS+url%2C+title+FROM+videos+ORDER+BY+title+LIMIT+10%3B.
-//
-// TODO(astrophena): Move sqlplay to https://sqlplay.astrophena.name. Or not?
 package main
 
 import (
