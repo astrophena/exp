@@ -72,7 +72,9 @@ func newServer(dbPath string) (*server, error) {
 	s := &server{db: db, dbPath: dbPath}
 
 	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
-		"cmdName": version.CmdName,
+		"cmdName": func() string {
+			return version.CmdName
+		},
 		"env": func() string {
 			return version.Env
 		},
