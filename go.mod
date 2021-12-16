@@ -5,13 +5,14 @@ go 1.18
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
-	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20211209130420-41f04b1eb290
+	git.astrophena.name/infra v0.0.0-20211216184310-b5963bbcabc7
 	github.com/alexandrevicenzi/go-sse v1.6.0
+	modernc.org/sqlite v1.14.2
 	tailscale.com v1.18.1
 )
 
@@ -65,7 +66,6 @@ require (
 	modernc.org/mathutil v1.4.1 // indirect
 	modernc.org/memory v1.0.5 // indirect
 	modernc.org/opt v0.1.1 // indirect
-	modernc.org/sqlite v1.14.2 // indirect
 	modernc.org/strutil v1.1.1 // indirect
 	modernc.org/token v1.0.0 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
