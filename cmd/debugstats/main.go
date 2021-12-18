@@ -20,12 +20,14 @@ import (
 	"git.astrophena.name/infra/cmd"
 	"git.astrophena.name/infra/util/atomicfile"
 	"git.astrophena.name/infra/web"
+
+	"github.com/peterbourgon/unixtransport"
 )
 
 var services = []string{
-	"bot",
-	"go",
-	"webdav",
+	"go-import-redirector",
+	"tgbotd",
+	"webdavd",
 }
 
 type vars struct {
@@ -35,6 +37,14 @@ type vars struct {
 	ProcessStartTime time.Time         `json:"process_start_time"`
 	Uptime           string            `json:"uptime"`
 	Version          string            `json:"version"`
+}
+
+func init() {
+	t, ok := http.DefaultTransport.(*http.Transport)
+	if !ok {
+		panic("http.DefaultTransport is not a pointer to http.Transport")
+	}
+	unixtransport.Register(t)
 }
 
 func main() {
@@ -174,7 +184,7 @@ func getVars() (map[string]vars, error) {
 	kv := make(map[string]vars)
 
 	for _, k := range services {
-		r, err := http.Get(fmt.Sprintf("https://%s.astrophena.name/debug/vars", k))
+		r, err := http.Get(fmt.Sprintf("http+unix:///run/%s/socket:/debug/vars", k))
 		if err != nil {
 			return nil, err
 		}
