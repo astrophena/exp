@@ -10,8 +10,9 @@ require (
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20211216184310-b5963bbcabc7
+	git.astrophena.name/infra v0.0.0-20211219175610-3745af68fa20
 	github.com/alexandrevicenzi/go-sse v1.6.0
+	github.com/peterbourgon/unixtransport v0.0.1
 	modernc.org/sqlite v1.14.2
 	tailscale.com v1.18.1
 )
@@ -36,7 +37,6 @@ require (
 	github.com/mdlayher/sdnotify v0.0.0-20210228150836-ea3ec207d697 // indirect
 	github.com/mdlayher/socket v0.0.0-20210307095302-262dc9984e00 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
-	github.com/peterbourgon/unixtransport v0.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/tailscale/certstore v0.0.0-20210528134328-066c94b793d3 // indirect
