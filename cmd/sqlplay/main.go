@@ -87,7 +87,6 @@ func newServer(dbPath string) (*server, error) {
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
-	s.mux.Handle("/about", http.RedirectHandler("https://godoc.astrophena.name/pkg/git.astrophena.name/exp/cmd/sqlplay/", http.StatusFound))
 
 	// Remind me that sqlplay code is in exp, not infra.
 	web.Debugger(s.mux).KV("Repo", "exp")
