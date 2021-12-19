@@ -116,6 +116,8 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	var tb strings.Builder
 	var queryErr error
 	if query != "" {
+		log.Printf("Got SQL query: %q (from IP %q, UA %q)", r.RemoteAddr, r.Header.Get("User-Agent"))
+
 		start := time.Now()
 		rows, err := s.db.Query(query)
 		if err != nil {
