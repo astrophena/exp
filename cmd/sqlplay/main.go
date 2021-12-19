@@ -6,7 +6,7 @@
 //
 //  SELECT 'https://youtube.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
 //
-// A testing instance of sqlplay is running at https://sqlplay.fly.dev.
+// A test instance of sqlplay is running at https://sqlplay.fly.dev.
 package main
 
 import (
