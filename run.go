@@ -67,9 +67,7 @@ func usage() {
 	w.Flush()
 }
 
-func logf(format string, args ...interface{}) {
-	log.Printf("==> "+format, args...)
-}
+func logf(format string, args ...any) { log.Printf("==> "+format, args...) }
 
 func start() error {
 	args := []string{

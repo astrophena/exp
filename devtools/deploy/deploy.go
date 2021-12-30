@@ -58,7 +58,7 @@ func Do() error {
 }
 
 // logf implements the logger.Logf.
-func logf(format string, args ...interface{}) { log.Printf("==> "+format, args...) }
+func logf(format string, args ...any) { log.Printf("==> "+format, args...) }
 
 // sync is a wrapper around rsync. It is run and originates on the local host
 // where deploy is being run. Argument names corresponds to the rsync command
