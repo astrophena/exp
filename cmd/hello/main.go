@@ -1,3 +1,4 @@
+// The hello binary is a HTTP server on https://testlab.coin-tone.ts.net.
 package main
 
 import (
@@ -9,6 +10,8 @@ import (
 	"net/http"
 	"path/filepath"
 	"runtime/debug"
+
+	"git.astrophena.name/infra/util/systemd"
 
 	"tailscale.com/client/tailscale"
 )
@@ -61,6 +64,7 @@ func main() {
 		},
 		Handler: mux,
 	}
+	systemd.Ready()
 	log.Fatal(s.ListenAndServeTLS("", ""))
 }
 

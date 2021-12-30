@@ -1,7 +1,9 @@
-// Package deploy deploys everything to the server using Ansible and rsync.
+// Package deploy deploys everything to the server. It's an experimental rewrite
+// of git.astrophena.name/infra/deploy.
 package deploy
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"os"
@@ -11,16 +13,24 @@ import (
 	"git.astrophena.name/infra/util/run"
 )
 
+//go:embed sandboxing.conf
+var sandboxingConf []byte
+
 var host = struct {
 	name     string
 	user     string
-	binaries []string
 	services []*Service
 }{
 	name: "testlab",
 	user: "astrophena",
 	services: []*Service{
-		{Name: "example"},
+		{
+			Name: "hello",
+			AdditionalOptions: map[string]string{
+				"User":                "astrophena",
+				"AmbientCapabilities": "CAP_NET_BIND_SERVICE",
+			},
+		},
 	},
 }
 
@@ -36,14 +46,17 @@ func Do() error {
 		servicesDir = filepath.Join(tmpDir, "services") // service binaries
 		unitsDir    = filepath.Join(tmpDir, "units")    // systemd units
 	)
-	for _, dir := range []string{servicesDir, unitsDir} {
+	for _, dir := range []string{servicesDir, unitsDir, filepath.Join(unitsDir, "infra-.service.d")} {
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
 		}
 	}
+	if err := os.WriteFile(filepath.Join(unitsDir, "infra-.service.d", "sandboxing.conf"), sandboxingConf, 0o644); err != nil {
+		return err
+	}
 
 	for _, s := range host.services {
-		install := run.Command("go", "install", "./cmd"+s.Name)
+		install := run.Command("go", "install", "./cmd/"+s.Name)
 		install.Env = append(os.Environ(), "GOBIN="+servicesDir)
 		if err := install.Run(); err != nil {
 			return err
@@ -52,6 +65,36 @@ func Do() error {
 		if err := os.WriteFile(filepath.Join(unitsDir, s.Name+".service"), s.genSystemdUnit(), 0o644); err != nil {
 			return err
 		}
+	}
+
+	logf("Copying service binaries...")
+	if err := sync(servicesDir+"/", "/usr/local/lib/infra", "root:root", true); err != nil {
+		return err
+	}
+
+	logf("Copying systemd units...")
+	if err := sync(unitsDir+"/", "/etc/systemd/system", "root:root", false); err != nil {
+		return err
+	}
+
+	logf("Reloading systemd...")
+	if err := systemctl("daemon-reload"); err != nil {
+		return err
+	}
+
+	var units []string
+	for _, s := range host.services {
+		units = append(units, s.Name+".service")
+	}
+
+	logf("Enabling and starting services...")
+	if err := systemctl("enable", append([]string{"--now"}, units...)...); err != nil {
+		return err
+	}
+
+	logf("Restarting services...")
+	if err := systemctl("restart", units...); err != nil {
+		return err
 	}
 
 	return nil

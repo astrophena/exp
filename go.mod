@@ -1,4 +1,4 @@
-module git.astrophena.name/testlab
+module git.astrophena.name/exp/testlab
 
 go 1.18
 
@@ -9,6 +9,7 @@ require (
 
 require (
 	github.com/akutz/memconn v0.1.0 // indirect
+	github.com/mdlayher/sdnotify v0.0.0-20210228150836-ea3ec207d697 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
 	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
 	go4.org/mem v0.0.0-20201119185036-c04c5a6ff174 // indirect
