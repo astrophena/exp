@@ -54,6 +54,7 @@ func Do() error {
 		return err
 	}
 
+	logf("Building binaries and generating systemd units...")
 	for _, s := range host.services {
 		install := run.Command("go", "install", "./cmd/"+s.Name)
 		install.Env = append(os.Environ(), "GOBIN="+servicesDir)

@@ -14,6 +14,8 @@ import (
 	"path/filepath"
 	"sort"
 	"text/tabwriter"
+
+	"git.astrophena.name/exp/testlab/deploy"
 )
 
 type command struct {
@@ -26,6 +28,10 @@ var commands = map[string]command{
 	"debian": command{
 		f:    startFunc("debian"),
 		desc: "Start Debian VM.",
+	},
+	"deploy-debian": command{
+		f:    func(args []string) error { return deploy.Do() },
+		desc: "Deploy various things to the Debian VM.",
 	},
 	"plan9": command{
 		f:    startFunc("plan9"),
