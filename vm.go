@@ -2,7 +2,8 @@
 
 //go:build ignore
 
-// This is a program that launches QEMU (https://qemu.org) VMs for experiments.
+// This is a program that launches QEMU (https://qemu.org) VMs for experiments
+// and does some other interesting things.
 package main
 
 import (
