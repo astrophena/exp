@@ -1,2 +1,2 @@
-/disk.qcow2
+/images/*.qcow2
 /cmd/hello/hello

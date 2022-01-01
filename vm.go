@@ -2,47 +2,107 @@
 
 //go:build ignore
 
-// This is a program that launches QEMU (https://qemu.org) VM running Debian for
-// experiments.
+// This is a program that launches QEMU (https://qemu.org) VMs for experiments.
 package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
-
-	"git.astrophena.name/exp/testlab/devtools/deploy"
+	"path/filepath"
+	"sort"
+	"text/tabwriter"
 )
+
+type command struct {
+	f    func(args []string) error
+	desc string
+}
+
+// commands is a list of available commands. Please keep it sorted.
+var commands = map[string]command{
+	"debian": command{
+		f:    startFunc("debian"),
+		desc: "Start Debian VM.",
+	},
+	"plan9": command{
+		f:    startFunc("plan9"),
+		desc: "Start Plan 9 VM.",
+	},
+}
 
 func main() {
 	log.SetFlags(0)
-	var (
-		doDeploy = flag.Bool("deploy", false, "deploy everything to the testlab, VM must be running")
-	)
-	flag.Parse()
 
-	if *doDeploy {
-		if err := deploy.Do(); err != nil {
-			log.Fatalf("Deploy failed: %v", err)
-		}
+	args := os.Args[1:]
+	if len(args) == 0 || args[0] == "help" || args[0] == "-h" {
+		usage()
 		return
 	}
 
-	args := []string{
-		"-enable-kvm",
-		"-m", "1024",
-		"-nic", "user,model=virtio",
-		"-drive", "file=disk.qcow2,media=disk,if=virtio",
-		"-nographic",
+	cmd, ok := commands[args[0]]
+	if !ok {
+		fmt.Fprintf(os.Stderr, "%s: unknown command\n\n", args[0])
+		os.Exit(127)
 	}
 
-	qemu := exec.Command("qemu-system-x86_64", args...)
-	qemu.Stdin = os.Stdin
-	qemu.Stdout = os.Stdout
-	qemu.Stderr = os.Stderr
+	if err := cmd.f(args[1:]); err != nil {
+		log.Fatalf("%s: %v", args[0], err)
+	}
+}
 
-	if err := qemu.Run(); err != nil {
-		log.Fatalf("QEMU exited: %v", err)
+func usage() {
+	w := tabwriter.NewWriter(os.Stderr, 0, 8, 1, '\t', tabwriter.AlignRight)
+
+	fmt.Fprintf(w, "Usage: ./vm.go [command]\n\n")
+	fmt.Fprintf(w, "Available commands:\n\n")
+
+	keys := make([]string, 0, len(commands))
+	for key := range commands {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		fmt.Fprintf(w, "  %s\t%s\t\n", key, commands[key].desc)
+	}
+
+	fmt.Fprintln(w, "")
+
+	w.Flush()
+}
+
+func startFunc(name string) func(args []string) error {
+	return func(args []string) error {
+		flags := flag.NewFlagSet(name, flag.ExitOnError)
+		var (
+			cdrom = flags.String("cdrom", "", "Path to the ISO `file` that should be attached to VM.")
+		)
+		flags.Parse(args)
+
+		qemu := exec.Command("qemu-system-x86_64")
+
+		if name != "plan9" {
+			qemu.Args = append(qemu.Args, "-nographic")
+		}
+		qemu.Stdout = os.Stdout
+		qemu.Stderr = os.Stderr
+		qemu.Args = append(qemu.Args, []string{
+			"-enable-kvm",
+			"-m", "1024",
+			"-nic", "user,model=virtio",
+			"-drive", "file=" + filepath.Join("images", name) + ".qcow2,media=disk,if=virtio",
+		}...)
+		if *cdrom != "" {
+			qemu.Args = append(qemu.Args, []string{"-cdrom", *cdrom}...)
+		}
+
+		if err := qemu.Run(); err != nil {
+			return err
+		}
+
+		return nil
 	}
 }

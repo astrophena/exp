@@ -1,5 +1,4 @@
-// Package deploy deploys everything to the server. It's an experimental rewrite
-// of git.astrophena.name/infra/deploy.
+// Package deploy deploys various things to the Debian VM.
 package deploy
 
 import (
