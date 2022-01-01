@@ -95,6 +95,8 @@ func startFunc(name string) func(args []string) error {
 		}
 		qemu.Stdout = os.Stdout
 		qemu.Stderr = os.Stderr
+		// See https://wiki.gentoo.org/wiki/QEMU/Options for all available QEMU
+		// options.
 		qemu.Args = append(qemu.Args, []string{
 			"-enable-kvm",
 			"-m", "1024",
@@ -102,7 +104,7 @@ func startFunc(name string) func(args []string) error {
 			"-drive", "file=" + filepath.Join("images", name) + ".qcow2,media=disk,if=virtio",
 		}...)
 		if *cdrom != "" {
-			qemu.Args = append(qemu.Args, []string{"-cdrom", *cdrom}...)
+			qemu.Args = append(qemu.Args, []string{"-cdrom", *cdrom, "-boot", "-d"}...)
 		}
 
 		if err := qemu.Run(); err != nil {
