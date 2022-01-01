@@ -6,6 +6,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -30,7 +31,12 @@ var commands = map[string]command{
 		desc: "Start Debian VM.",
 	},
 	"deploy-debian": command{
-		f:    func(args []string) error { return deploy.Do() },
+		f: func(args []string) error {
+			if !isOnline("testlab") {
+				return fmt.Errorf("VM is not online on the tailnet, or Tailscale is not installed or working :(")
+			}
+			return deploy.Do()
+		},
 		desc: "Deploy various things to the Debian VM.",
 	},
 	"plan9": command{
@@ -113,4 +119,32 @@ func startFunc(name string) func(args []string) error {
 
 		return nil
 	}
+}
+
+// isOnline reports whether the machine with hostname is online on the current
+// tailnet.
+func isOnline(hostname string) bool {
+	b, err := exec.Command("tailscale", "status", "--json").Output()
+	if err != nil {
+		return false
+	}
+
+	var status struct {
+		Peer map[string]struct {
+			HostName string
+			Active   bool
+		}
+	}
+
+	if err := json.Unmarshal(b, &status); err != nil {
+		return false
+	}
+
+	for _, p := range status.Peer {
+		if p.HostName == hostname && p.Active {
+			return true
+		}
+	}
+
+	return false
 }
