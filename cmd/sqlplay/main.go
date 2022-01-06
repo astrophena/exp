@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"git.astrophena.name/infra/cmd"
+	"git.astrophena.name/infra/types/env"
 	"git.astrophena.name/infra/version"
 	"git.astrophena.name/infra/web"
 
@@ -73,8 +74,8 @@ func newServer(dbPath string) (*server, error) {
 
 	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
 		"cmdName": version.CmdName,
-		"env": func() string {
-			return version.Env
+		"env": func() env.Env {
+			return version.Env()
 		},
 	}).Parse(tpl)
 	if err != nil {
