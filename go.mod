@@ -10,11 +10,11 @@ require (
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20211219175610-3745af68fa20
+	git.astrophena.name/infra v0.0.0-20220105144251-1620c3dce86c
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/peterbourgon/unixtransport v0.0.1
 	modernc.org/sqlite v1.14.2
-	tailscale.com v1.18.1
+	tailscale.com v1.18.2
 )
 
 require (

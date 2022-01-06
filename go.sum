@@ -1,6 +1,10 @@
 filippo.io/mkcert v1.4.3 h1:axpnmtrZMM8u5Hf4N3UXxboGemMOV+Tn+e+pkHM6E3o=
 git.astrophena.name/infra v0.0.0-20211219175610-3745af68fa20 h1:X41HFYn/OMxiAMWqQdxnmDBclVbXFnKjX5mStZSFdiM=
 git.astrophena.name/infra v0.0.0-20211219175610-3745af68fa20/go.mod h1:rFF7GYOYg9HSVuo/aueMsDF9DvoQW9fx9DbeCjyqJ0g=
+git.astrophena.name/infra v0.0.0-20211222200336-2a88d37406bc h1:IJrvicjiQzMi7HH9kd7K2zJ8QRuXW0NJn5jRMC4nHKc=
+git.astrophena.name/infra v0.0.0-20211222200336-2a88d37406bc/go.mod h1:rFF7GYOYg9HSVuo/aueMsDF9DvoQW9fx9DbeCjyqJ0g=
+git.astrophena.name/infra v0.0.0-20220105144251-1620c3dce86c h1:NctZ6VBSUYltKDD4Fpc0ERGkxo9BceJAtAPBiF+fWYs=
+git.astrophena.name/infra v0.0.0-20220105144251-1620c3dce86c/go.mod h1:bCgdXaR98PYQzEJ3gLNRwJ4vWA5EgnzUjvEPI31TsT8=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/PuerkitoBio/goquery v1.8.0 h1:PJTF7AmFCFKk1N6V6jmKfrNH9tV5pNE6lZMkG0gta/U=
 github.com/PuerkitoBio/goquery v1.8.0/go.mod h1:ypIiRMtY7COPGk+I/YbZLbxsxn9g5ejnI2HSMtkjZvI=
@@ -411,3 +415,5 @@ nhooyr.io/websocket v1.8.7/go.mod h1:B70DZP8IakI65RVQ51MsWP/8jndNma26DVA/nFSCgW0
 software.sslmate.com/src/go-pkcs12 v0.0.0-20180114231543-2291e8f0f237 h1:iAEkCBPbRaflBgZ7o9gjVUuWuvWeV4sytFWg9o+Pj2k=
 tailscale.com v1.18.1 h1:3hkMsdpREdz2w0O3YcmOgJkl95ChTT4Dje7wq8prD/E=
 tailscale.com v1.18.1/go.mod h1:XzG4o2vtYFkVvmJWPaTGSaOzqlKSRx2WU+aJbrxaVE0=
+tailscale.com v1.18.2 h1:97bYZWQ91knzR/JvP24Xz/uaq81zz/Xn47PqDdnjquc=
+tailscale.com v1.18.2/go.mod h1:XzG4o2vtYFkVvmJWPaTGSaOzqlKSRx2WU+aJbrxaVE0=
