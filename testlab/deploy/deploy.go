@@ -30,6 +30,12 @@ var host = struct {
 				"AmbientCapabilities": "CAP_NET_BIND_SERVICE",
 			},
 		},
+		{
+			Name: "piper",
+			AdditionalOptions: map[string]string{
+				"Type": "simple",
+			},
+		},
 	},
 }
 

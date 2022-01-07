@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"path/filepath"
 	"runtime/debug"
 
@@ -57,6 +59,10 @@ func main() {
 		}
 		w.Write(b)
 	})
+	mux.Handle("/piper", httputil.NewSingleHostReverseProxy(&url.URL{
+		Scheme: "http",
+		Host:   "localhost:3000",
+	}))
 
 	s := &http.Server{
 		TLSConfig: &tls.Config{
