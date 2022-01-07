@@ -5,12 +5,12 @@ go 1.18
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
-	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
+	golang.org/x/net v0.0.0-20220107192237-5cfca573fb4d // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20220105144251-1620c3dce86c
+	git.astrophena.name/infra v0.0.0-20220107221926-34e098a296a6
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/peterbourgon/unixtransport v0.0.1
 	modernc.org/sqlite v1.14.3
