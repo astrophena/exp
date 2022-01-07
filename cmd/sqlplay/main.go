@@ -2,9 +2,10 @@
 // but for SQL queries (so people can write queries & share them). It's based on
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
 //
-// For example, you can run this query on sqlite/liked.db:
+// For example, you can run this query on sqlite/liked.db to choose 10 random
+// YouTube videos that I liked:
 //
-//  SELECT 'https://youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
+//  SELECT 'https://youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY RANDOM() LIMIT 10;
 package main
 
 import (
