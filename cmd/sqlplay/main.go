@@ -4,7 +4,7 @@
 //
 // For example, you can run this query on sqlite/liked.db:
 //
-//  SELECT 'https://youtube.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
+//  SELECT 'https://youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
 package main
 
 import (
