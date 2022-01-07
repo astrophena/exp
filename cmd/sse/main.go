@@ -16,7 +16,7 @@ import (
 //go:embed htmx.js
 var htmx string
 
-//go:embed tmpl.html
+//go:embed template.tmpl
 var tmpl string
 
 func main() {

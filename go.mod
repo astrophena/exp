@@ -13,7 +13,7 @@ require (
 	git.astrophena.name/infra v0.0.0-20220105144251-1620c3dce86c
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/peterbourgon/unixtransport v0.0.1
-	modernc.org/sqlite v1.14.2
+	modernc.org/sqlite v1.14.3
 	tailscale.com v1.18.2
 )
 
@@ -62,8 +62,8 @@ require (
 	inet.af/netstack v0.0.0-20211101182044-1c1bcf452982 // indirect
 	lukechampine.com/uint128 v1.1.1 // indirect
 	modernc.org/cc/v3 v3.35.18 // indirect
-	modernc.org/ccgo/v3 v3.12.82 // indirect
-	modernc.org/libc v1.11.87 // indirect
+	modernc.org/ccgo/v3 v3.12.95 // indirect
+	modernc.org/libc v1.11.104 // indirect
 	modernc.org/mathutil v1.4.1 // indirect
 	modernc.org/memory v1.0.5 // indirect
 	modernc.org/opt v0.1.1 // indirect

@@ -11,6 +11,8 @@ import (
 	"runtime"
 	"text/tabwriter"
 	"time"
+
+	"git.astrophena.name/infra/version"
 )
 
 var services = []string{
@@ -25,7 +27,7 @@ type vars struct {
 	MemStats         *runtime.MemStats `json:"memstats"`
 	ProcessStartTime time.Time         `json:"process_start_time"`
 	Uptime           string            `json:"uptime"`
-	Version          string            `json:"version"`
+	Version          version.Info      `json:"version"`
 }
 
 func formatSize(b int64) string {
@@ -45,7 +47,7 @@ func formatSize(b int64) string {
 func main() {
 	w := tabwriter.NewWriter(os.Stderr, 0, 8, 1, '\t', tabwriter.AlignRight)
 
-	fmt.Fprintf(w, "Service\tMemory\tGoroutines\tUptime\n")
+	fmt.Fprintf(w, "Service\tMemory\tGoroutines\tUptime\tVersion\n")
 
 	for _, s := range services {
 		r, err := http.Get(fmt.Sprintf("https://%s.astrophena.name/debug/vars", s))
@@ -64,7 +66,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		fmt.Fprintf(w, "%s\t%s\t%d\t%s\n", s, formatSize(int64(v.MemStats.Alloc)), v.Goroutines, v.Uptime)
+		fmt.Fprintf(w, "%s\t%s\t%d\t%s\t%s\n", s, formatSize(int64(v.MemStats.Alloc)), v.Goroutines, v.Uptime, v.Version.Commit)
 	}
 
 	w.Flush()

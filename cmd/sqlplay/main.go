@@ -5,8 +5,6 @@
 // For example, you can run this query on sqlite/liked.db:
 //
 //  SELECT 'https://youtube.com/embed/' || id AS url, title FROM videos ORDER BY title LIMIT 10;
-//
-// A test instance of sqlplay is running at https://sqlplay.fly.dev.
 package main
 
 import (
@@ -34,7 +32,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-//go:embed template.html
+//go:embed template.tmpl
 var tpl string
 
 func main() {
