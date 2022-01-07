@@ -1,3 +1,4 @@
+// The piper binary is a simple HTTP server that is reverse proxied by hello.
 package main
 
 import (
