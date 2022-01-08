@@ -5,7 +5,7 @@
 // For example, you can run this query on sqlite/liked.db to choose 10 random
 // YouTube videos that I liked:
 //
-//  SELECT 'https://youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY RANDOM() LIMIT 10;
+//  SELECT 'https://www.youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY RANDOM() LIMIT 10;
 package main
 
 import (
@@ -73,9 +73,7 @@ func newServer(dbPath string) (*server, error) {
 
 	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
 		"cmdName": version.CmdName,
-		"env": func() env.Env {
-			return version.Env()
-		},
+		"env":     func() env.Env { return version.Env() },
 	}).Parse(tpl)
 	if err != nil {
 		return nil, err
@@ -190,7 +188,6 @@ func colHTML(v interface{}) string {
 	return h
 }
 
-// isValidURL tests a string to determine if it is a well-structured URL or not.
 func isValidURL(toTest string) bool {
 	_, err := url.ParseRequestURI(toTest)
 	if err != nil {
@@ -205,17 +202,14 @@ func isValidURL(toTest string) bool {
 	return true
 }
 
-// generateRandomBytes returns random bytes.
 func generateRandomBytes(size int) []byte {
 	b := make([]byte, size)
 	if _, err := rand.Read(b); err != nil {
 		panic(err)
 	}
-
 	return b
 }
 
-// generateRandomString returns a random string.
 func generateRandomString(size int) string {
 	return base64.URLEncoding.EncodeToString(generateRandomBytes(size))
 }
