@@ -92,12 +92,13 @@ func startFunc(name string) func(args []string) error {
 		flags := flag.NewFlagSet(name, flag.ExitOnError)
 		var (
 			cdrom = flags.String("cdrom", "", "Path to the ISO `file` that should be attached to VM.")
+			gui   = flags.Bool("gui", name == "plan9", "Run in GUI mode.")
 		)
 		flags.Parse(args)
 
 		qemu := exec.Command("qemu-system-x86_64")
 
-		if name != "plan9" {
+		if !*gui {
 			qemu.Args = append(qemu.Args, "-nographic")
 		}
 		qemu.Stdout = os.Stdout
