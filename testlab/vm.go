@@ -8,6 +8,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -89,12 +90,16 @@ func usage() {
 
 func startFunc(name string) func(args []string) error {
 	return func(args []string) error {
-		flags := flag.NewFlagSet(name, flag.ExitOnError)
+		flags := flag.NewFlagSet(name, flag.ContinueOnError)
 		var (
 			cdrom = flags.String("cdrom", "", "Path to the ISO `file` that should be attached to VM.")
 			gui   = flags.Bool("gui", name == "plan9", "Run in GUI mode.")
 		)
-		flags.Parse(args)
+		if err := flags.Parse(args); errors.Is(err, flag.ErrHelp) {
+			return nil
+		} else if err != nil {
+			return err
+		}
 
 		qemu := exec.Command("qemu-system-x86_64")
 
