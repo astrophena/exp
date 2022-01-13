@@ -7,7 +7,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -18,7 +17,7 @@ import (
 	"sort"
 	"text/tabwriter"
 
-	"git.astrophena.name/exp/testlab/deploy"
+	"git.astrophena.name/infra/util/run"
 )
 
 type command struct {
@@ -31,15 +30,6 @@ var commands = map[string]command{
 	"debian": command{
 		f:    startFunc("debian"),
 		desc: "Start Debian VM.",
-	},
-	"deploy-debian": command{
-		f: func(args []string) error {
-			if !isOnline("testlab") {
-				return fmt.Errorf("VM is not online on the tailnet, or Tailscale is not installed or working :(")
-			}
-			return deploy.Do()
-		},
-		desc: "Deploy various things to the Debian VM.",
 	},
 	"plan9": command{
 		f:    startFunc("plan9"),
@@ -92,8 +82,9 @@ func startFunc(name string) func(args []string) error {
 	return func(args []string) error {
 		flags := flag.NewFlagSet(name, flag.ContinueOnError)
 		var (
-			cdrom = flags.String("cdrom", "", "Path to the ISO `file` that should be attached to VM.")
-			gui   = flags.Bool("gui", name == "plan9", "Run in GUI mode.")
+			cdrom    = flags.String("cdrom", "", "Path to the ISO `file` that should be attached to VM.")
+			userData = flags.String("user-data", "", "Path to the user data `file`.")
+			gui      = flags.Bool("gui", name == "plan9", "Run in GUI mode.")
 		)
 		if err := flags.Parse(args); errors.Is(err, flag.ErrHelp) {
 			return nil
@@ -110,14 +101,31 @@ func startFunc(name string) func(args []string) error {
 		qemu.Stderr = os.Stderr
 		// See https://wiki.gentoo.org/wiki/QEMU/Options for all available QEMU
 		// options.
-		qemu.Args = append(qemu.Args, []string{
+		qemu.Args = append(qemu.Args,
 			"-enable-kvm",
 			"-m", "1024",
 			"-nic", "user,model=virtio",
-			"-drive", "file=" + filepath.Join("images", name) + ".qcow2,media=disk,if=virtio",
-		}...)
+			"-drive", "file="+filepath.Join("images", name)+".qcow2,media=disk,if=virtio",
+			"-device", "virtio-net-pci,netdev=net0",
+			"-netdev", "user,id=net0,hostfwd=tcp::2222-:22",
+		)
+
 		if *cdrom != "" {
-			qemu.Args = append(qemu.Args, []string{"-cdrom", *cdrom, "-boot", "-d"}...)
+			qemu.Args = append(qemu.Args, "-cdrom", *cdrom, "-boot", "-d")
+		}
+
+		if *userData != "" {
+			tmpdir, err := os.MkdirTemp("", "testlab-*")
+			if err != nil {
+				return err
+			}
+			defer os.RemoveAll(tmpdir)
+
+			seedImg := filepath.Join(tmpdir, "seed.img")
+			if err := run.Command("cloud-localds", seedImg, *userData).Run(); err != nil {
+				return err
+			}
+			qemu.Args = append(qemu.Args, "-drive", "if=virtio,format=raw,file="+seedImg)
 		}
 
 		if err := qemu.Run(); err != nil {
@@ -126,32 +134,4 @@ func startFunc(name string) func(args []string) error {
 
 		return nil
 	}
-}
-
-// isOnline reports whether the machine with hostname is online on the current
-// tailnet.
-func isOnline(hostname string) bool {
-	b, err := exec.Command("tailscale", "status", "--json").Output()
-	if err != nil {
-		return false
-	}
-
-	var status struct {
-		Peer map[string]struct {
-			HostName string
-			Active   bool
-		}
-	}
-
-	if err := json.Unmarshal(b, &status); err != nil {
-		return false
-	}
-
-	for _, p := range status.Peer {
-		if p.HostName == hostname && p.Active {
-			return true
-		}
-	}
-
-	return false
 }

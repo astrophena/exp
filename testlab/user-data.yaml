@@ -1,0 +1,15 @@
+#cloud-config
+hostname: 'testlab'
+ssh_authorized_keys:
+  - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRby5PSlunMRkkAbkRLL/6tbThPrfa2Kp/6ejWDc+iS dev'
+system_info:
+  default_user:
+    name: 'astrophena'
+    gecos: 'Ilya Mateyko'
+packages:
+  - 'git'
+  - 'htop'
+  - 'rcm'
+  - 'vim'
+package_update: true
+package_upgrade: true
