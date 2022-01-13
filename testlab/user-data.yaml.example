@@ -11,7 +11,8 @@ apt:
     tailscale:
       source: 'deb [trusted=yes] https://pkgs.tailscale.com/stable/debian $RELEASE main'
 runcmd:
-  - 'tailscale up --authkey=tskey-k6xa6s6CNTRL-6ktkgUdK1A9Y3W8E8Ei1Zh'
+  # Replace $TAILSCALE_AUTH_KEY with your Tailscale auth key.
+  - 'tailscale up --authkey=$TAILSCALE_AUTH_KEY'
 packages:
   - 'git'
   - 'htop'
