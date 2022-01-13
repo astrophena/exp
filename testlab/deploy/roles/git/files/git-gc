@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+for repo in *.git/; do
+	pushd "$repo" >/dev/null
+	echo "==> Running 'git gc' on $repo..."
+	git gc --aggressive --prune=now
+	popd >/dev/null
+done

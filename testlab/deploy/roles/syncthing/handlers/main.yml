@@ -1,0 +1,5 @@
+---
+- name: 'Restart Syncthing'
+  ansible.builtin.systemd:
+    name: 'syncthing@files'
+    state: 'restarted'

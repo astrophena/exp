@@ -1,0 +1,21 @@
+---
+- name: 'Configure sshd'
+  ansible.builtin.copy:
+    src: 'sshd_config'
+    dest: '/etc/ssh/sshd_config'
+    mode: '0644'
+    validate: '/usr/sbin/sshd -T -f %s'
+  notify: 'Restart sshd'
+- name: 'Ensure that /etc/ssh/keys does exist'
+  ansible.builtin.file:
+    path: '/etc/ssh/keys'
+    state: 'directory'
+    mode: '0755'
+- name: 'Configure authorized SSH keys'
+  ansible.builtin.template:
+    src: 'keys/{{ item }}.pub.j2'
+    dest: '/etc/ssh/keys/{{ item }}.pub'
+    mode: '0644'
+  loop:
+    - 'astrophena'
+    - 'git'

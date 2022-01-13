@@ -1,0 +1,29 @@
+---
+- name: 'Add Miniflux APT key'
+  ansible.builtin.apt_key:
+    url: 'https://apt.miniflux.app/KEY.gpg'
+    state: 'present'
+- name: 'Add Miniflux APT repository'
+  ansible.builtin.apt_repository:
+    repo: 'deb https://apt.miniflux.app/ /'
+    state: 'present'
+- name: 'Install Miniflux'
+  ansible.builtin.apt:
+    name: 'miniflux'
+    state: 'present'
+- name: 'Create a PostgreSQL database for Miniflux'
+  become_user: 'postgres'
+  community.postgresql.postgresql_db:
+    name: 'miniflux'
+- name: 'Create a PostgreSQL user for Miniflux'
+  become_user: 'postgres'
+  community.postgresql.postgresql_user:
+    db: 'miniflux'
+    name: 'miniflux'
+# TODO: grant read-only privileges for restic PostgreSQL user.
+- name: 'Configure Miniflux'
+  ansible.builtin.copy:
+    src: 'miniflux.conf'
+    dest: '/etc/miniflux.conf'
+  notify:
+    - 'Restart Miniflux'

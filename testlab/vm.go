@@ -49,8 +49,6 @@ func vm(name, userData string) error {
 		"-m", "1024",
 		"-nic", "user,model=virtio",
 		"-drive", "file="+filepath.Join("images", name)+".qcow2,media=disk,if=virtio",
-		"-device", "virtio-net-pci,netdev=net0",
-		"-netdev", "user,id=net0",
 	)
 
 	if userData != "" {

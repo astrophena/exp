@@ -1,0 +1,9 @@
+---
+- name: 'Upgrade everything on the server'
+  hosts: 'infra'
+  become: true
+  tasks:
+    - name: 'Upgrade all software'
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: 'dist'

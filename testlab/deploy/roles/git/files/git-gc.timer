@@ -1,0 +1,9 @@
+[Unit]
+Description=Clean up Git repositories
+
+[Timer]
+OnCalendar=Tue *-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
