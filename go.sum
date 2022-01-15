@@ -1,6 +1,6 @@
 filippo.io/mkcert v1.4.3 h1:axpnmtrZMM8u5Hf4N3UXxboGemMOV+Tn+e+pkHM6E3o=
-git.astrophena.name/infra v0.0.0-20220115095957-a83eefa6e2fe h1:G4kXuvgKTIfx6VB8ix1R7Y1MJ7cuiGmfZe86kMYqTqo=
-git.astrophena.name/infra v0.0.0-20220115095957-a83eefa6e2fe/go.mod h1:Xx7kBosIRQLMBLkdMUFWtJ2p2b63GQLT/yChu6jMo3I=
+git.astrophena.name/infra v0.0.0-20220115182223-4e0e704dd41a h1:Sa8hG39EjLI95y48HKNyZYob1UrFZaHWwdrM4ftwdOE=
+git.astrophena.name/infra v0.0.0-20220115182223-4e0e704dd41a/go.mod h1:Xx7kBosIRQLMBLkdMUFWtJ2p2b63GQLT/yChu6jMo3I=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v0.4.1 h1:GaI7EiDXDRfa8VshkTj7Fym7ha+y8/XxIgD2okUIjLw=
 github.com/BurntSushi/toml v0.4.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=

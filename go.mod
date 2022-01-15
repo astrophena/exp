@@ -10,7 +10,7 @@ require (
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20220115095957-a83eefa6e2fe
+	git.astrophena.name/infra v0.0.0-20220115182223-4e0e704dd41a
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/peterbourgon/unixtransport v0.0.1
 	modernc.org/sqlite v1.14.4
