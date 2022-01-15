@@ -37,18 +37,16 @@ import (
 var tpl string
 
 func main() {
-	var (
-		addr   = flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
-		dbPath = flag.String("db", "", "Path to the SQLite database.")
-	)
+	var addr = flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
 	cmd.SetDescription("SQL playground.")
 	cmd.HandleStartup()
 
-	if *dbPath == "" {
-		log.Fatal("Set the -db flag to the SQLite database path.")
+	dbPath := flag.Arg(0)
+	if dbPath == "" {
+		log.Fatal("You need to specify a path to the SQLite database.")
 	}
 
-	s, err := newServer(*dbPath)
+	s, err := newServer(dbPath)
 	if err != nil {
 		log.Fatal("Failed to initialize the server: %v", err)
 	}
