@@ -1,6 +1,0 @@
-# SSH keys that should be allowed to access the server.
-ssh_keys:
-  - 'ssh-ed25519
-    AAAAC3NzaC1lZDI1NTE5AAAAIDRby5PSlunMRkkAbkRLL/6tbThPrfa2Kp/6ejWDc+iS dev'
-  - 'ssh-ed25519
-    AAAAC3NzaC1lZDI1NTE5AAAAIFe5wkEWEcsbmvd98I9O/QUMshosB9QYyfUCKVlLZMEu phone'

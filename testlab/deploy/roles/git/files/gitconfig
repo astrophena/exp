@@ -1,4 +1,0 @@
-[init]
-	defaultBranch = master
-[receive]
-	advertisePushOptions = true
