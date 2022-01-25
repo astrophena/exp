@@ -5,16 +5,16 @@ go 1.18
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/senseyeio/duration v0.0.0-20180430131211-7c2a214ada46
-	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
+	golang.org/x/net v0.0.0-20220121210141-e204ce36a2ba // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 )
 
 require (
-	git.astrophena.name/infra v0.0.0-20220115182223-4e0e704dd41a
+	git.astrophena.name/infra v0.0.0-20220125000921-c370e56459be
 	github.com/alexandrevicenzi/go-sse v1.6.0
 	github.com/peterbourgon/unixtransport v0.0.1
-	modernc.org/sqlite v1.14.4
-	tailscale.com v1.20.1
+	modernc.org/sqlite v1.14.5
+	tailscale.com v1.20.2
 )
 
 require (
@@ -53,7 +53,7 @@ require (
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20211027215541-db492cf91b37 // indirect
 	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e // indirect
 	golang.org/x/mod v0.5.1 // indirect
-	golang.org/x/sys v0.0.0-20211205182925-97ca703d548d // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	golang.org/x/tools v0.1.8 // indirect
@@ -66,8 +66,8 @@ require (
 	inet.af/netstack v0.0.0-20211120045802-8aa80cf23d3c // indirect
 	lukechampine.com/uint128 v1.1.1 // indirect
 	modernc.org/cc/v3 v3.35.22 // indirect
-	modernc.org/ccgo/v3 v3.14.0 // indirect
-	modernc.org/libc v1.13.2 // indirect
+	modernc.org/ccgo/v3 v3.15.1 // indirect
+	modernc.org/libc v1.14.1 // indirect
 	modernc.org/mathutil v1.4.1 // indirect
 	modernc.org/memory v1.0.5 // indirect
 	modernc.org/opt v0.1.1 // indirect
