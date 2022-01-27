@@ -6,18 +6,10 @@ system_info:
   default_user:
     name: 'astrophena'
     gecos: 'Ilya Mateyko'
-apt:
-  sources:
-    tailscale:
-      source: 'deb [trusted=yes] https://pkgs.tailscale.com/stable/debian $RELEASE main'
-runcmd:
-  # Replace $TAILSCALE_AUTH_KEY with your Tailscale auth key.
-  - 'tailscale up --authkey=$TAILSCALE_AUTH_KEY'
 packages:
   - 'git'
   - 'htop'
   - 'rcm'
-  - 'tailscale'
   - 'vim'
 package_update: true
 package_upgrade: true
