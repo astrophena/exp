@@ -13,7 +13,7 @@ import "C"
 import (
 	"runtime"
 
-	"git.astrophena.name/exp/watchtime"
+	"go.astrophena.name/exp/watchtime"
 )
 
 //export Add

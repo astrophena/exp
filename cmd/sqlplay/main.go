@@ -55,7 +55,7 @@ func main() {
 	web.ListenAndServe(&web.ListenAndServeConfig{
 		Mux:  s.mux,
 		Addr: *addr,
-		OnShutdown: func() {
+		AfterShutdown: func() {
 			s.db.Close()
 		},
 	})
