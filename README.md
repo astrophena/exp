@@ -1,7 +1,7 @@
 # `exp`
 
 This repository contains various experiments. Some code depends on private
-repositories or doesn't even build :sad:.
+repositories or doesn't even build.
 
 Use them with discretion and have fun!
 
