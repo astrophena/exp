@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}System info{% endblock %}
+
+{% block main %}
+<h1>System info</h1>
+
+<p>See <a href="https://docs.python.org/3/library/os.html#os.uname">Python documentation</a> for meaning of these fields.</p>
+
+<p>Also you can do this:</p>
+
+<pre><code>$ curl https://flask.astrophena.name/sysinfo?format=json | jq</code></pre>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Sysname</td>
+      <td><code>{{ uname.sysname }}</code></td>
+    </tr>
+    <tr>
+      <td>Nodename</td>
+      <td><code>{{ uname.nodename }}</code></td>
+    </tr>
+    <tr>
+      <td>Release</td>
+      <td><code>{{ uname.release }}</code></td>
+    </tr>
+    <tr>
+      <td>Version</td>
+      <td><code>{{ uname.version }}</code></td>
+    </tr>
+    <tr>
+      <td>Machine</td>
+      <td><code>{{ uname.machine }}</code></td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

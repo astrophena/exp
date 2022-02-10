@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}{{bug.title }} · Bug #{{ bug.id }}{% endblock %}
+
+{% block main %}
+    <h1>{{ bug.title }}</h1>
+
+    <p><i>Opened by {{ bug.owner }} {{ bug.created_at|naturaltime }}</i>.</p>
+
+    <p>{{ bug.text }}</p>
+{% endblock %}
