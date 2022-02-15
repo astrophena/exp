@@ -1,35 +1,42 @@
-{% extends 'base.html' %} {% block title %}Log in{% endblock %} {% block main %}
-{% if form.errors %}
-<div class="flash flash--alert">
-  Your username and password didn't match. Please try again.
-</div>
-{% endif %}
+{% extends 'base.html' %}
 
-<h1>Log in</h1>
+{% block title %}Log in{% endblock %}
 
-{% if next %}
-<div class="flash flash--alert">
-  {% if user.is_authenticated %} Your account doesn't have access to this page.
-  To proceed, please login with an account that has access. {% else %} Please
-  login to see this page. {% endif %}
-</div>
-{% endif %}
+{% block main %}
 
-<form method="post" action="{% url 'login' %}">
-  {% csrf_token %}
+    {% if form.errors %}
+        <div class="flash flash--alert">
+            Your username and password didn't match. Please try again.
+        </div>
+    {% endif %}
 
-  <p>{{ form.username.label_tag }}</p>
-  <p>{{ form.username }}</p>
+    <h1>Log in</h1>
 
-  <p>{{ form.password.label_tag }}</p>
-  <p>{{ form.password }}</p>
+    {% if next %}
+        <div class="flash flash--alert">
+            {% if user.is_authenticated %}
+                Your account doesn't have access to this page. To proceed, please login with an account that has access.
+            {% else %}
+                Please login to see this page.
+            {% endif %}
+        </div>
+    {% endif %}
 
-  <p>
-    <input type="submit" value="Log in" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </p>
-</form>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
 
-<p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+        <p>{{ form.username.label_tag }}</p>
+        <p>{{ form.username }}</p>
+
+        <p>{{ form.password.label_tag }}</p>
+        <p>{{ form.password }}</p>
+
+        <p>
+            <input type="submit" value="Log in">
+            <input type="hidden" name="next" value="{{ next }}">
+        </p>
+    </form>
+
+    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
 
 {% endblock %}

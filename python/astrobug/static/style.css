@@ -402,12 +402,12 @@ li {
 .flash {
   padding: 10px 0;
   text-align: center;
-  color: #fff;
-  display: block;
+  color: #FFF;
+	display: block;
 }
 
 .flash a {
-  color: #fff;
+  color: #FFF;
 }
 
 .flash--notice {
@@ -415,5 +415,5 @@ li {
 }
 
 .flash--alert {
-  background-color: #871f22;
+  background-color: #871F22;
 }

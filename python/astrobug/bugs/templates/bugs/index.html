@@ -1,22 +1,24 @@
-{% extends 'base.html' %} {% load humanize %} {% block title %}Bugs{% endblock
-%} {% block main %}
-<h1>Bugs</h1>
+{% extends 'base.html' %}
+{% load humanize %}
 
-{% if bugs %}
-<table>
-  <tbody>
-    {% for bug in bugs %}
-    <tr>
-      <td><i>{{ bug.get_state_display }}</i></td>
-      <td>
-        <a href="{% url 'bugs:detail' bug.id %}">#{{bug.id}}</a> — {{ bug.title
-        }}
-      </td>
-      <td><i>by {{ bug.owner }} {{ bug.created_at|naturaltime }}</i></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No bugs.</p>
-{% endif %} {% endblock %}
+{% block title %}Bugs{% endblock %}
+
+{% block main %}
+    <h1>Bugs</h1>
+
+    {% if bugs %}
+        <table>
+            <tbody>
+                {% for bug in bugs %}
+                    <tr>
+                        <td><i>{{ bug.get_state_display }}</i></td>
+                        <td><a href="{% url 'bugs:detail' bug.id %}">#{{bug.id}}</a> — {{ bug.title }}</td>
+                        <td><i>by {{ bug.owner }} {{ bug.created_at|naturaltime }}</i></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No bugs.</p>
+    {% endif %}
+{% endblock %}

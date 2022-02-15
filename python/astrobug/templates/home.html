@@ -1,10 +1,12 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block main %}
-<p>
-  Welcome to Astrobug! This is the bug tracking service for
-  <a href="https://astrophena.name">astrophena</a>'s projects.
-</p>
-{% if user.is_authenticated %}
-<p>See the <a href="{% url 'bugs:index' %}">bugs</a>.</p>
-{% else %}
-<p><a href="{% url 'login' %}">Log in</a> to get started.</p>
-{% endif %} {% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+    <p>Welcome to Astrobug! This is the bug tracking service for <a href="https://astrophena.name">astrophena</a>'s projects.</p>
+    {% if user.is_authenticated %}
+        <p>See the <a href="{% url 'bugs:index' %}">bugs</a>.</p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to get started.</p>
+    {% endif %}
+{% endblock %}

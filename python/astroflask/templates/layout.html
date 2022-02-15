@@ -1,5 +1,5 @@
 <!-- vim: set ft=htmldjango: -->
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -7,14 +7,8 @@
     <meta name="theme-color" content="#12161a" />
     <meta name="twitter:dnt" content="on" />
     <meta name="format-detection" content="telephone=no" />
-    <link
-      rel="icon"
-      href="{{ url_for('static', filename='icons/36x36.webp') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <link rel="icon" href="{{ url_for('static', filename='icons/36x36.webp') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
@@ -26,6 +20,8 @@
         <a href="/dump-request">Dump request</a>
       </nav>
     </header>
-    <main>{% block main %}{% endblock %}</main>
+    <main>
+      {% block main %}{% endblock %}
+    </main>
   </body>
 </html>
