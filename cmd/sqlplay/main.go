@@ -1,15 +1,11 @@
 // The sqlplay binary is a little internal tool that's like the Go playground
 // but for SQL queries (so people can write queries & share them). It's based on
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
-//
-// For example, you can run this query on sqlite/liked.db to choose 10 random
-// YouTube videos that I liked:
-//
-//  SELECT 'https://www.youtube-nocookie.com/embed/' || id AS url, title FROM videos ORDER BY RANDOM() LIMIT 10;
 package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"database/sql"
 	_ "embed"
@@ -20,15 +16,14 @@ import (
 	"html/template"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
-
-	"git.astrophena.name/infra/cmd"
-	"git.astrophena.name/infra/types/env"
-	"git.astrophena.name/infra/version"
-	"git.astrophena.name/infra/web"
 
 	_ "modernc.org/sqlite"
 )
@@ -36,10 +31,14 @@ import (
 //go:embed template.tmpl
 var tpl string
 
+//go:embed style.css
+var baseCSS string
+
 func main() {
-	var addr = flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
-	cmd.SetDescription("SQL playground.")
-	cmd.HandleStartup()
+	log.SetFlags(0)
+
+	addr := flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
+	flag.Parse()
 
 	dbPath := flag.Arg(0)
 	if dbPath == "" {
@@ -48,17 +47,37 @@ func main() {
 
 	s, err := newServer(dbPath)
 	if err != nil {
-		log.Fatal("Failed to initialize the server: %v", err)
+		log.Fatalf("Failed to initialize the server: %v", err)
 	}
 
 	log.Printf("Using database %s.", s.dbPath)
-	web.ListenAndServe(&web.ListenAndServeConfig{
-		Mux:  s.mux,
-		Addr: *addr,
-		AfterShutdown: func() {
-			s.db.Close()
-		},
-	})
+
+	l, err := net.Listen("tcp", *addr)
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
+	}
+	defer l.Close()
+	log.Printf("Listening on %s://%s...", l.Addr().Network(), l.Addr().String())
+
+	hs := &http.Server{Handler: s.mux}
+	go func() {
+		if err := hs.Serve(l); err != nil {
+			if err != http.ErrServerClosed {
+				log.Fatalf("HTTP server crashed: %v", err)
+			}
+		}
+	}()
+
+	exit := make(chan os.Signal, 1)
+	signal.Notify(exit, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	sig := <-exit
+	log.Printf("Received %s, gracefully shutting down...", sig)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	hs.Shutdown(ctx)
 }
 
 func newServer(dbPath string) (*server, error) {
@@ -69,10 +88,7 @@ func newServer(dbPath string) (*server, error) {
 
 	s := &server{db: db, dbPath: dbPath}
 
-	s.tpl, err = template.New("sqlplay").Funcs(template.FuncMap{
-		"cmdName": version.CmdName,
-		"env":     func() env.Env { return version.Env() },
-	}).Parse(tpl)
+	s.tpl, err = template.New("sqlplay").Parse(tpl)
 	if err != nil {
 		return nil, err
 	}
@@ -83,9 +99,6 @@ func newServer(dbPath string) (*server, error) {
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
-
-	// Remind me that sqlplay code is in exp, not infra.
-	web.Debugger(s.mux).KV("Repo", "exp")
 
 	return s, nil
 }
@@ -99,7 +112,7 @@ type server struct {
 
 func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		web.NotFound(w, r)
+		http.NotFound(w, r)
 		return
 	}
 
@@ -151,15 +164,16 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	d := struct {
+		BaseCSS              template.CSS
 		QueryErr             error
 		Duration             time.Duration
 		Nonce, DBPath, Query string
 		Table                template.HTML
-	}{queryErr, dur, nonce, s.dbPath, query, template.HTML(tb.String())}
+	}{template.CSS(baseCSS), queryErr, dur, nonce, s.dbPath, query, template.HTML(tb.String())}
 
 	var buf bytes.Buffer
 	if err := s.tpl.Execute(&buf, d); err != nil {
-		web.Error(w, r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	buf.WriteTo(w)
