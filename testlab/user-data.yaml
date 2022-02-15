@@ -1,7 +1,8 @@
 #cloud-config
 hostname: 'testlab'
 ssh_authorized_keys:
-  - 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFePmQe+3ZjDcoDO/1xu6jtana8k2ILlMBBaKebph0lb dev'
+  - 'ssh-ed25519
+    AAAAC3NzaC1lZDI1NTE5AAAAIFePmQe+3ZjDcoDO/1xu6jtana8k2ILlMBBaKebph0lb dev'
 system_info:
   default_user:
     name: 'astrophena'

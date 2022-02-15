@@ -1,14 +1,18 @@
-{% extends 'layout.html' %}
-
-{% block title %}Astroflask{% endblock %}
-
-{% block main %}
-This is an example app for learning <a href="https://flask.palletsprojects.com/en/2.0.x/">Flask</a>.
+{% extends 'layout.html' %} {% block title %}Astroflask{% endblock %} {% block
+main %} This is an example app for learning
+<a href="https://flask.palletsprojects.com/en/2.0.x/">Flask</a>.
 
 <p>Greet someone:</p>
 
 <form action="/greet" method="post">
-  <input autocomplete="off" autofocus required name="name" placeholder="Name" type="text">
-  <input type="submit" value="Submit">
+  <input
+    autocomplete="off"
+    autofocus
+    required
+    name="name"
+    placeholder="Name"
+    type="text"
+  />
+  <input type="submit" value="Submit" />
 </form>
 {% endblock %}
