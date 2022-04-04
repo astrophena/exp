@@ -11,8 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"git.astrophena.name/infra/util/run"
 )
 
 type command struct {
@@ -61,7 +59,7 @@ func vm(name, userData string) error {
 		defer os.RemoveAll(tmpdir)
 
 		seedImg := filepath.Join(tmpdir, "seed.img")
-		if err := run.Command("cloud-localds", seedImg, userData).Run(); err != nil {
+		if err := exec.Command("cloud-localds", seedImg, userData).Run(); err != nil {
 			return err
 		}
 		qemu.Args = append(qemu.Args, "-drive", "if=virtio,format=raw,file="+seedImg)

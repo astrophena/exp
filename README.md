@@ -7,4 +7,4 @@ Use them with discretion and have fun!
 
 ## License
 
-[MIT](LICENSE.md) © [Ilya Mateyko](https://github.com/astrophena).
+[MIT](LICENSE.md) © [Ilya Mateyko](https://github.com/astrophena)
