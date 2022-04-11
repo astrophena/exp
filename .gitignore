@@ -4,3 +4,7 @@
 db.sqlite3
 __pycache__
 venv
+
+/cmd/pomodoro/pomodoro
+/cmd/renamer/renamer
+/cmd/sqlplay/sqlplay

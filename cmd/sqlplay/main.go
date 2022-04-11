@@ -21,23 +21,27 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
-	_ "modernc.org/sqlite"
+	_ "github.com/tailscale/sqlite"
 )
 
-//go:embed template.tmpl
-var tpl string
+// Embedded resources.
+var (
+	//go:embed template.html
+	tpl string
 
-//go:embed style.css
-var baseCSS string
+	//go:embed style.css
+	baseCSS string
+)
 
 func main() {
 	log.SetFlags(0)
 
-	addr := flag.String("addr", "localhost:3000", "Listen on `host:port or Unix socket`.")
+	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
 	flag.Parse()
 
 	dbPath := flag.Arg(0)
@@ -81,7 +85,12 @@ func main() {
 }
 
 func newServer(dbPath string) (*server, error) {
-	db, err := sql.Open("sqlite", dbPath)
+	fullPath, err := filepath.Abs(dbPath)
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := sql.Open("sqlite3", "file://"+fullPath)
 	if err != nil {
 		return nil, err
 	}
