@@ -3,6 +3,7 @@
 //go:build ignore
 
 // This is a program that launches QEMU (https://qemu.org) VMs for experiments.
+// Dependencies: qemu-kvm, cloud-image-utils.
 package main
 
 import (
@@ -12,11 +13,6 @@ import (
 	"os/exec"
 	"path/filepath"
 )
-
-type command struct {
-	f    func(args []string) error
-	desc string
-}
 
 func main() {
 	log.SetFlags(0)
