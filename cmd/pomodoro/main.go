@@ -54,6 +54,7 @@ loop:
 			ticker.Reset(breakTime)
 			notifyAndLog("Pomodoro %v elapsed, time for a break of %v.", pomodoros, breakTime)
 			wasBreak = true
+			continue
 		}
 
 		pomodoros++
