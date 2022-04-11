@@ -9,7 +9,6 @@ system_info:
 packages:
   - 'git'
   - 'htop'
-  - 'rcm'
   - 'vim'
 package_update: true
 package_upgrade: true
