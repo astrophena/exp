@@ -45,18 +45,6 @@ func runTimer(ctx context.Context, pomodoro, shortBreak, longBreak time.Duration
 
 loop:
 	for {
-		if !wasBreak {
-			breakTime := shortBreak
-			// Take a long break on each fourth pomodoro.
-			if pomodoros%4 == 0 {
-				breakTime = longBreak
-			}
-			ticker.Reset(breakTime)
-			notifyAndLog("Pomodoro %v elapsed, time for a break of %v.", pomodoros, breakTime)
-			wasBreak = true
-			continue
-		}
-
 		pomodoros++
 		wasBreak = false
 		notifyAndLog("Pomodoro %v started for %v.", pomodoros, pomodoro)
@@ -64,6 +52,16 @@ loop:
 
 		select {
 		case <-ticker.C:
+			if !wasBreak {
+				breakTime := shortBreak
+				// Take a long break on each fourth pomodoro.
+				if pomodoros%4 == 0 {
+					breakTime = longBreak
+				}
+				ticker.Reset(breakTime)
+				notifyAndLog("Pomodoro %v elapsed, time for a break of %v.", pomodoros, breakTime)
+				wasBreak = true
+			}
 			continue
 		case <-ctx.Done():
 			break loop
