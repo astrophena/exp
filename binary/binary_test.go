@@ -23,4 +23,41 @@ func TestDecimalAndBinary(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		t.Logf("n >> %d = %d", i, n>>i)
 	}
+	for i := 0; i < 10; i++ {
+		t.Logf("n << %d = %d", i, n<<i)
+	}
+}
+
+type bits uint8
+
+const (
+	f0 bits = 1 << iota
+	f1
+	f2
+	f3
+	f4
+	f5
+	f6
+	f7
+)
+
+func set(b, flag bits) bits    { return b | flag }
+func clear(b, flag bits) bits  { return b &^ flag }
+func toggle(b, flag bits) bits { return b ^ flag }
+func has(b, flag bits) bool    { return b&flag != 0 }
+
+func TestBitMask(t *testing.T) {
+	var n = bits(0b11111111)
+	var n2 = bits(0b01010100)
+	t.Logf("n = %d", n)
+	t.Logf("f1 = %v", f1)
+
+	t.Logf("has(n, f7) = %v", has(n, f7))
+	t.Logf("has(n2, f7) = %v", has(n2, f7))
+
+	var n3 bits
+	t.Logf("n3 = %d (%b)", n3, n3)
+	n3 = toggle(n3, f7)
+	n3 = toggle(n3, f0)
+	t.Logf("n3 = %d (%b)", n3, n3)
 }
