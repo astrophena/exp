@@ -28,6 +28,8 @@ func TestDecimalAndBinary(t *testing.T) {
 	}
 }
 
+// See https://yourbasic.org/golang/bitmask-flag-set-clear/.
+
 type bits uint8
 
 const (
@@ -60,4 +62,7 @@ func TestBitMask(t *testing.T) {
 	n3 = toggle(n3, f7)
 	n3 = toggle(n3, f0)
 	t.Logf("n3 = %d (%b)", n3, n3)
+
+	n4 := f1 | f2 | f4 | f7
+	t.Logf("n4 = %d (%b)", n4, n4)
 }
