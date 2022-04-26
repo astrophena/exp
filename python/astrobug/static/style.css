@@ -399,11 +399,12 @@ li {
   margin: 8px;
 }
 
+/* Flash messages */
 .flash {
   padding: 10px 0;
   text-align: center;
   color: #FFF;
-	display: block;
+  display: block;
 }
 
 .flash a {
