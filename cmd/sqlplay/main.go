@@ -1,5 +1,7 @@
-// The sqlplay binary is a little internal tool that's like the Go playground
-// but for SQL queries (so people can write queries & share them). It's based on
+// Command sqlplay is a little tool that's like the Go playground but for SQL
+// queries.
+//
+// It's based on
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
 package main
 
@@ -29,7 +31,6 @@ import (
 	_ "github.com/tailscale/sqlite"
 )
 
-// Embedded resources.
 var (
 	//go:embed template.html
 	tpl string

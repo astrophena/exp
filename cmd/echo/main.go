@@ -1,4 +1,4 @@
-// echo is a simple TCP server that echoes anything is receives.
+// Command echo is a simple TCP server that echoes anything is receives.
 package main
 
 import (
@@ -11,9 +11,7 @@ import (
 func main() {
 	log.SetFlags(0)
 
-	var (
-		addr = flag.String("addr", "localhost:3000", "Listen on `host:port`.")
-	)
+	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
 	flag.Parse()
 
 	l, err := net.Listen("tcp", *addr)
@@ -42,7 +40,7 @@ func handle(conn net.Conn) {
 		if err != nil {
 			if err == io.EOF {
 				// Probably disconnected.
-				log.Printf("Disconnected.")
+				log.Printf("%v disconnected.", conn.RemoteAddr())
 				return
 			}
 			log.Printf("conn.Read: %v", err)
@@ -50,7 +48,7 @@ func handle(conn net.Conn) {
 		}
 		_, err = conn.Write(buf[:n])
 		if err != nil {
-			log.Printf("conn.Write: %v", err)
+			log.Printf("Write to %v failed: %v", conn.RemoteAddr(), err)
 			return
 		}
 	}
