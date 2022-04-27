@@ -1,4 +1,4 @@
-// Command echo is a simple TCP server that echoes anything is receives.
+// Command echo is a simple TCP server that echoes anything it receives.
 package main
 
 import (
