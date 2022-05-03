@@ -6,8 +6,9 @@ import (
 	"net/http"
 	"time"
 
+	"go.astrophena.name/exp/util/iso8601"
+
 	"github.com/PuerkitoBio/goquery"
-	"github.com/senseyeio/duration"
 )
 
 // Fetch returns a watch time of YouTube video with the supplied ID.
@@ -51,7 +52,7 @@ func Fetch(videoID string) (time.Duration, error) {
 		return 0, fmt.Errorf("no duration found")
 	}
 
-	dur, err := duration.ParseISO8601(durs)
+	dur, err := iso8601.ParseDuration(durs)
 	if err != nil {
 		return 0, fmt.Errorf("unable to parse duration: %w", err)
 	}
@@ -59,7 +60,7 @@ func Fetch(videoID string) (time.Duration, error) {
 	return timeDuration(dur), nil
 }
 
-func timeDuration(d duration.Duration) time.Duration {
+func timeDuration(d iso8601.Duration) time.Duration {
 	var dur time.Duration
 	dur = dur + (time.Duration(d.TH) * time.Hour)
 	dur = dur + (time.Duration(d.TM) * time.Minute)
