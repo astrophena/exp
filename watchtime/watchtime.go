@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"go.astrophena.name/exp/util/iso8601"
+	"go.astrophena.name/exp/iso8601"
 
 	"github.com/PuerkitoBio/goquery"
 )
