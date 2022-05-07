@@ -8,17 +8,14 @@ package main
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"database/sql"
 	_ "embed"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"html"
 	"html/template"
 	"io"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -36,7 +33,7 @@ var (
 	tpl string
 
 	//go:embed style.css
-	baseCSS string
+	css string
 )
 
 func main() {
@@ -57,16 +54,13 @@ func main() {
 
 	log.Printf("Using database %s.", s.dbPath)
 
-	l, err := net.Listen("tcp", *addr)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+	httpSrv := &http.Server{
+		Addr:    *addr,
+		Handler: s.mux,
 	}
-	defer l.Close()
-	log.Printf("Listening on %s://%s...", l.Addr().Network(), l.Addr().String())
-
-	hs := &http.Server{Handler: s.mux}
 	go func() {
-		if err := hs.Serve(l); err != nil {
+		log.Printf("Listening on %s...", *addr)
+		if err := httpSrv.ListenAndServe(); err != nil {
 			if err != http.ErrServerClosed {
 				log.Fatalf("HTTP server crashed: %v", err)
 			}
@@ -82,7 +76,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	hs.Shutdown(ctx)
+	httpSrv.Shutdown(ctx)
 }
 
 func newServer(dbPath string) (*server, error) {
@@ -109,6 +103,9 @@ func newServer(dbPath string) (*server, error) {
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
+	s.mux.Handle("/style.css", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeContent(w, r, "style.css", time.Now(), strings.NewReader(css))
+	})
 
 	return s, nil
 }
@@ -125,9 +122,6 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
-	nonce := generateRandomString(16)
-	w.Header().Set("Content-Security-Policy", fmt.Sprintf("default-src 'self'; style-src 'self' 'nonce-%s'", nonce))
 
 	query := r.FormValue("query")
 
@@ -154,8 +148,8 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 			io.WriteString(&tb, `</tr>`)
 
 			for rows.Next() {
-				val := make([]interface{}, len(cols))
-				valPtr := make([]interface{}, len(cols))
+				val := make([]any, len(cols))
+				valPtr := make([]any, len(cols))
 				for i := range cols {
 					valPtr[i] = &val[i]
 				}
@@ -174,12 +168,11 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	}
 
 	d := struct {
-		BaseCSS              template.CSS
-		QueryErr             error
-		Duration             time.Duration
-		Nonce, DBPath, Query string
-		Table                template.HTML
-	}{template.CSS(baseCSS), queryErr, dur, nonce, s.dbPath, query, template.HTML(tb.String())}
+		QueryErr      error
+		Duration      time.Duration
+		DBPath, Query string
+		Table         template.HTML
+	}{queryErr, dur, s.dbPath, query, template.HTML(tb.String())}
 
 	var buf bytes.Buffer
 	if err := s.tpl.Execute(&buf, d); err != nil {
@@ -189,7 +182,7 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	buf.WriteTo(w)
 }
 
-func colFmt(v interface{}) string {
+func colFmt(v any) string {
 	switch v := v.(type) {
 	case []byte:
 		return string(v)
@@ -200,7 +193,7 @@ func colFmt(v interface{}) string {
 	}
 }
 
-func colHTML(v interface{}) string {
+func colHTML(v any) string {
 	s := colFmt(v)
 	h := html.EscapeString(s)
 	// Convert valid URLs into links.
@@ -222,16 +215,4 @@ func isValidURL(toTest string) bool {
 	}
 
 	return true
-}
-
-func generateRandomBytes(size int) []byte {
-	b := make([]byte, size)
-	if _, err := rand.Read(b); err != nil {
-		panic(err)
-	}
-	return b
-}
-
-func generateRandomString(size int) string {
-	return base64.URLEncoding.EncodeToString(generateRandomBytes(size))
 }

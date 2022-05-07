@@ -2,39 +2,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>SQL Playground</title>
-    <style nonce="{{ .Nonce }}">
-      {{ .BaseCSS }}
-
-      textarea {
-        font-family: "Fira Code", monospace;
-        width: 100%;
-      }
-
-      .flash {
-        padding: 10px 0;
-        text-align: center;
-        color: #fff;
-        display: block;
-      }
-
-      .flash a {
-        color: #fff;
-      }
-
-      .flash--alert {
-        background-color: #871f22;
-      }
-    </style>
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <header>
       <h1>SQL Playground</h1>
       <nav>
         {{ if .Query }}
-        <a href="/">Clear</a>
+          <a href="/">Clear</a>
         {{ end }}
         <a href="/schema">Schema</a>
       </nav>
@@ -42,18 +20,20 @@
     <main>
       <p>Using database <code>{{ .DBPath }}</code>.</p>
       <form method="GET">
-        <textarea name="query" rows="5" cols="80" placeholder="Enter your query...">{{ .Query }}</textarea>
+        <textarea name="query" rows="5" cols="80" placeholder="Enter your query...">
+{{ .Query }}</textarea
+        >
         <input type="submit" value="Query" />
       </form>
 
       {{ if .Query }}
-      {{ if .QueryErr }}
-      <div class="flash flash--alert">{{ .QueryErr }}</div>
-      {{ end }}
-      {{ if .Table }}
-      <p><i>Took {{ .Duration }}.</i></p>
-      {{ .Table }}
-      {{ end }}
+        {{ if .QueryErr }}
+          <div class="flash flash--alert">{{ .QueryErr }}</div>
+        {{ end }}
+        {{ if .Table }}
+          <p><i>Took {{ .Duration }}.</i></p>
+          {{ .Table }}
+        {{ end }}
       {{ end }}
     </main>
   </body>
