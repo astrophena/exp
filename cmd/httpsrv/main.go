@@ -1,6 +1,10 @@
-// vim: foldmethod=marker
-
-// Command httpsrv is the HTTP server boilerplate.
+// Command httpsrv is the starting point for a service that serves HTTP
+// requests.
+//
+// TODO: Listen on HTTPS, if needed, and automatically redirect all HTTP
+// traffic.
+//
+// TODO: Integrate with systemd and Tailscale.
 package main
 
 import (
@@ -44,7 +48,7 @@ type server struct {
 	initErr error
 }
 
-func (s *server) doInit() { // {{{
+func (s *server) doInit() {
 	if err := func() error {
 		s.http = &http.Server{
 			Addr:    s.addr,
@@ -55,9 +59,9 @@ func (s *server) doInit() { // {{{
 	}(); err != nil {
 		s.initErr = err
 	}
-} // }}}
+}
 
-func (s *server) run(ctx context.Context) error { // {{{
+func (s *server) run(ctx context.Context) error {
 	s.init.Do(s.doInit)
 	if s.initErr != nil {
 		return s.initErr
@@ -78,9 +82,9 @@ func (s *server) run(ctx context.Context) error { // {{{
 	case <-ctx.Done():
 		return s.shutdown()
 	}
-} // }}}
+}
 
-func (s *server) shutdown() error { // {{{
+func (s *server) shutdown() error {
 	log.Printf("Gracefully shutting down...")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -91,7 +95,7 @@ func (s *server) shutdown() error { // {{{
 	}
 
 	return nil
-} // }}}
+}
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Put something useful here.")
