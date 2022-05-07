@@ -3,6 +3,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,6 +17,10 @@ func main() {
 
 	num := int64(10)
 	if len(os.Args) > 1 {
+		if os.Args[1] == "help" || os.Args[1] == "-h" || os.Args[1] == "--help" || os.Args[1] == "-help" {
+			fmt.Fprintf(os.Stderr, "cmdtop displays the top of most used Bash commands.\n\nUsage: cmdtop [num]\n")
+			return
+		}
 		var err error
 		num, err = strconv.ParseInt(os.Args[1], 10, 64)
 		if err != nil {
