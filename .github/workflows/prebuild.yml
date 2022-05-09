@@ -1,0 +1,26 @@
+name: 'Prebuild binaries'
+on:
+  workflow_dispatch:  
+jobs:
+  prebuild:
+    name: 'Prebuild binaries'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Check out'
+        uses: 'actions/checkout@v3'
+      - name: 'Set up Go'
+        uses: 'actions/setup-go@v3'
+        with:
+          go-version: '1.18'
+      - name: 'Cache Go dependencies'
+        uses: 'actions/cache@v3'
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
+      - name: 'Prebuild binaries'
+        run: './cmd/prebuild.sh'
+      - name: 'Upload binaries as artifacts'
+        uses: 'actions/upload-artifact@v3'
+        path: 'dist'
