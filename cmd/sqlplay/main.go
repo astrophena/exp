@@ -103,7 +103,7 @@ func newServer(dbPath string) (*server, error) {
 	// https://stackoverflow.com/a/6617764
 	schemaQuery.Set("query", "SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name;")
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
-	s.mux.Handle("/style.css", func(w http.ResponseWriter, r *http.Request) {
+	s.mux.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeContent(w, r, "style.css", time.Now(), strings.NewReader(css))
 	})
 
