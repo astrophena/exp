@@ -23,4 +23,5 @@ jobs:
         run: './cmd/prebuild.sh'
       - name: 'Upload binaries as artifacts'
         uses: 'actions/upload-artifact@v3'
-        path: 'dist'
+        with:
+          path: 'dist'
