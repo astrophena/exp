@@ -11,6 +11,9 @@ jobs:
           - 'cmdtop'
           - 'renamer'
           - 'sqlplay'
+        goos-goarch:
+          - 'android-arm64'
+          - 'linux-amd64'
     steps:
       - name: 'Check out'
         uses: 'actions/checkout@v3'
@@ -25,6 +28,10 @@ jobs:
             ~/go/pkg/mod
             ~/.cache/go-build
           key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
+      - name: 'Set GOOS and GOARCH'
+        run: |
+          echo "GOOS=${${{ matrix.goos-goarch }}%%-*}" >> "$GITHUB_ENV"
+          echo "GOARCH=${${{ matrix.goos-goarch }}#*-}" >> "$GITHUB_ENV"
       - name: 'Build'
         env:
           CGO_ENABLED: '0'
@@ -33,5 +40,5 @@ jobs:
       - name: 'Upload as artifact'
         uses: 'actions/upload-artifact@v3'
         with:
-          name: '${{ matrix.cmd }}'
+          name: '${{ matrix.cmd }}-${{ matrix.goos-goarch }}'
           path: 'cmd/${{ matrix.cmd }}/${{ matrix.cmd }}'
