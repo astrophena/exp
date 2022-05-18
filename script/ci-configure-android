@@ -21,4 +21,4 @@ case "$GOARCH" in
 	;;
 esac
 export API="21"
-echo CC_FOR_TARGET="$TOOLCHAIN/bin/$TARGET$API-clang" >>"$GITHUB_ENV"
+echo CC="$TOOLCHAIN/bin/$TARGET$API-clang" >>"$GITHUB_ENV"
