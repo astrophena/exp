@@ -38,6 +38,8 @@ jobs:
             ~/.cache/go-build
           key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
       - name: 'Configure toolchain for Android builds'
+        env:
+          GOARCH: '${{ matrix.goarch }}'
         if: "matrix.goos == 'android'"
         run: 'script/ci-configure-android'
       - name: 'Build'
