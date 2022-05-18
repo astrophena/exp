@@ -1,9 +1,10 @@
-name: 'Build'
+name: 'Build commands'
 on:
-  workflow_dispatch:  
+  push:
+  pull_request:
 jobs:
-  build:
-    name: 'Build'
+  build-cmds:
+    name: 'Build commands'
     runs-on: 'ubuntu-latest'
     strategy:
       matrix:
@@ -11,9 +12,15 @@ jobs:
           - 'cmdtop'
           - 'renamer'
           - 'sqlplay'
-        goos-goarch:
-          - 'android-arm64'
-          - 'linux-amd64'
+        goos:
+          - 'android'
+          - 'linux'
+        goarch:
+          - 'amd64'
+          - 'arm64'
+        exclude:
+          - goos: 'android'
+            goarch: 'amd64'
     steps:
       - name: 'Check out'
         uses: 'actions/checkout@v3'
@@ -28,17 +35,15 @@ jobs:
             ~/go/pkg/mod
             ~/.cache/go-build
           key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
-      - name: 'Set GOOS and GOARCH'
-        run: |
-          echo "GOOS=${${{ matrix.goos-goarch }}%%-*}" >> "$GITHUB_ENV"
-          echo "GOARCH=${${{ matrix.goos-goarch }}#*-}" >> "$GITHUB_ENV"
       - name: 'Build'
         env:
           CGO_ENABLED: '0'
+          GOARCH: '${{ matrix.goarch }}'
+          GOOS: '${{ matrix.goos }}'
         working-directory: 'cmd/${{ matrix.cmd }}'
         run: 'go build -ldflags="-s -w -buildid=" -trimpath'
       - name: 'Upload as artifact'
         uses: 'actions/upload-artifact@v3'
         with:
-          name: '${{ matrix.cmd }}-${{ matrix.goos-goarch }}'
+          name: '${{ matrix.cmd }}-${{ matrix.goos }}-${{ matrix.goarch }}'
           path: 'cmd/${{ matrix.cmd }}/${{ matrix.cmd }}'
