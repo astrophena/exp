@@ -21,6 +21,8 @@ jobs:
         exclude:
           - goos: 'android'
             goarch: 'amd64'
+          - goos: 'linux'
+            goarch: 'arm64'
     steps:
       - name: 'Check out'
         uses: 'actions/checkout@v3'
