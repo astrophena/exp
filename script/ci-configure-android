@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Based on https://developer.android.com/ndk/guides/other_build_systems.
+
+export TOOLCHAIN="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64"
+case "$GOARCH" in
+"arm64")
+	export TARGET="aarch64-linux-android"
+	;;
+"amd64")
+	export TARGET="x86_64-linux-android"
+	;;
+"arm")
+	export TARGET="armv7a-linux-androideabi"
+	;;
+*)
+	echo "Not supported."
+	exit 1
+	;;
+esac
+export API="21"
+echo CC_FOR_TARGET="$TOOLCHAIN/bin/$TARGET$API-clang" >>"$GITHUB_ENV"
