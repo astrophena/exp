@@ -1,10 +1,16 @@
-name: 'Prebuild binaries'
+name: 'Build'
 on:
   workflow_dispatch:  
 jobs:
-  prebuild:
-    name: 'Prebuild binaries'
+  build:
+    name: 'Build'
     runs-on: 'ubuntu-latest'
+    strategy:
+      matrix:
+        cmd:
+          - 'cmdtop'
+          - 'renamer'
+          - 'sqlplay'
     steps:
       - name: 'Check out'
         uses: 'actions/checkout@v3'
@@ -19,9 +25,13 @@ jobs:
             ~/go/pkg/mod
             ~/.cache/go-build
           key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
-      - name: 'Prebuild binaries'
-        run: './cmd/prebuild.sh'
-      - name: 'Upload binaries as artifacts'
+      - name: 'Build'
+        env:
+          CGO_ENABLED: '0'
+        working-directory: 'cmd/${{ matrix.cmd }}'
+        run: 'go build -ldflags="-s -w -buildid=" -trimpath'
+      - name: 'Upload as artifact'
         uses: 'actions/upload-artifact@v3'
         with:
-          path: 'dist'
+          name: '${{ matrix.cmd }}'
+          path: 'cmd/${{ matrix.cmd }}/${{ matrix.cmd }}'
