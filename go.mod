@@ -11,4 +11,4 @@ require github.com/tailscale/sqlite v0.0.0-20220402182010-0300126d72de
 
 require github.com/andybalholm/cascadia v1.3.1 // indirect
 
-replace github.com/tailscale/sqlite => github.com/astrophena/sqlite v0.0.0-20220519142647-a87d012ef845
+replace github.com/tailscale/sqlite => github.com/astrophena/sqlite v0.0.0-20220519143347-abc6dc1814b0
