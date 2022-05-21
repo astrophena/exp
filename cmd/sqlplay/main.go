@@ -1,7 +1,4 @@
-// Command sqlplay is a little tool that's like the Go playground but for SQL
-// queries.
-//
-// It's based on
+// Command sqlplay is a playground for SQLite databases. It's based on
 // https://gist.github.com/bradfitz/a7db110a6bd7d9c9bd02352adaea389b.
 package main
 
@@ -56,7 +53,7 @@ func main() {
 
 	httpSrv := &http.Server{
 		Addr:    *addr,
-		Handler: s.mux,
+		Handler: s,
 	}
 	go func() {
 		log.Printf("Listening on %s...", *addr)
@@ -117,6 +114,8 @@ type server struct {
 	tpl    *template.Template
 }
 
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) { s.mux.ServeHTTP(w, r) }
+
 func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
@@ -129,8 +128,6 @@ func (s *server) serve(w http.ResponseWriter, r *http.Request) {
 	var tb strings.Builder
 	var queryErr error
 	if query != "" {
-		log.Printf("Got SQL query: %q (from IP %q, UA %q)", query, r.RemoteAddr, r.Header.Get("User-Agent"))
-
 		start := time.Now()
 		rows, err := s.db.Query(query)
 		if err != nil {

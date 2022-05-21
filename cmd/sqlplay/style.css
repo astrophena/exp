@@ -40,18 +40,15 @@
 
 /* Set the global variables for everything. */
 :root {
-  /* Set sans-serif & mono fonts */
   --sans-font: apple-system, BlinkMacSystemFont, avenir next, avenir, 'Nimbus Sans L', roboto, noto,
     segoe ui, arial, helvetica, helvetica neue, sans-serif;
   --mono-font: 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-
-  /* Dark theme */
-  --bg: #212121;
+  --bg: #171a1f;
   --accent-bg: #2b2b2b;
   --text: #ababab;
   --text-light: #808080;
   --border: #666;
-  --accent: #ffb300;
+  --accent: #b2c6e6;
   --accent-light: #ffecb3;
   --code: #f06292;
 }
@@ -60,50 +57,65 @@ img {
   opacity: 0.6;
 }
 
+/* Set the font globally. */
 * {
-  /* Set the font globally */
   font-family: var(--sans-font);
 }
 
-/* Make the body a nice central block */
 body {
   color: var(--text);
   background: var(--bg);
-  font-size: 1.15rem;
+  font-size: 1rem;
   line-height: 1.5;
-  margin: 0;
 }
 
-/* Make the main element a nice central block */
-main {
-  margin: 0 auto;
-  margin-top: 1rem;
-  max-width: 45rem;
-  padding: 0 0.5rem;
-}
-
-/* Make the header bg full width, but the content inline with body */
+main,
 header {
-  background: var(--accent-bg);
-  border-bottom: 1px solid var(--border);
-  padding: 1.5rem 15rem;
-  margin-bottom: 1.5rem;
+  margin: 0 auto;
+  max-width: 600px;
 }
 
-/* Reduces header padding on smaller screens */
+header {
+  padding: 1.5rem 15rem;
+  padding-bottom: 0.67rem;
+  margin-bottom: -1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Hide the scrollbar in navigation. */
+
+header nav {
+  /* See https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Scrollbars#scrollbar-width. */
+  scrollbar-width: none; /* Firefox */
+}
+
+header nav::-webkit-scrollbar {
+  /* See https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar#-webkit-scrollbar. */
+  display: none; /* Chrome & friends */
+}
+
+/* Remove header padding and change bottom margin on smaller screens. */
 @media only screen and (max-width: 1200px) {
   header {
-    padding: 1rem;
+    padding: 1rem 0rem 0rem 0rem;
+    margin-bottom: -1rem;
+  }
+  main,
+  header {
+    margin-left: 10px;
   }
 }
 
-/* Remove margins for header text */
+/* Remove margins for header text. */
 header h1,
 header p {
   margin: 0;
 }
 
-/* Format navigation */
+/* Format navigation. */
 nav {
   font-size: 1rem;
   white-space: nowrap;
@@ -121,7 +133,6 @@ nav a {
   display: inline-block;
   padding: 0.1rem 1rem;
   text-decoration: none;
-  transition: 0.4s;
 }
 
 nav a:hover {
@@ -134,40 +145,14 @@ nav a.current:hover {
 }
 
 footer {
-  margin-top: 2rem;
-  padding: 2rem 1rem 1.5rem 1rem;
+  padding: 1rem 1rem 1.5rem 1rem;
   color: var(--text-light);
   font-size: 0.9rem;
   text-align: center;
-  border-top: 1px solid var(--border);
 }
 
-/* Format headers */
-h1 {
-  font-size: 2.25rem;
-}
+/* Format links and buttons. */
 
-h2 {
-  font-size: 1.85rem;
-}
-
-h3 {
-  font-size: 1.55rem;
-}
-
-h4 {
-  font-size: 1.25rem;
-}
-
-h5 {
-  font-size: 1.15rem;
-}
-
-h6 {
-  font-size: 0.9rem;
-}
-
-/* Format links & buttons */
 a,
 a:visited {
   color: var(--accent);
@@ -213,13 +198,15 @@ input[type='button']:enabled:hover {
   opacity: 0.8;
 }
 
-/* Format the expanding box */
+/* Format the expanding box. */
+
 details {
   padding: 0.6rem 1rem;
   background: var(--accent-bg);
   border: 1px solid var(--border);
   border-radius: 5px;
   margin-bottom: 1rem;
+  overflow: auto;
 }
 
 summary {
@@ -239,11 +226,13 @@ details[open] > *:last-child {
   margin-bottom: 0;
 }
 
-/* Format tables */
+/* Format tables. */
+
 table {
   border-collapse: collapse;
   width: 100%;
   margin: 1.5rem 0;
+  overflow-x: auto;
 }
 
 td,
@@ -268,13 +257,13 @@ table caption {
   margin-bottom: 0.5rem;
 }
 
-/* Lists */
+/* Lists. */
 ol,
 ul {
   padding-left: 3rem;
 }
 
-/* Format forms */
+/* Format forms. */
 textarea,
 select,
 input {
@@ -291,12 +280,12 @@ input {
   width: 60%;
 }
 
-/* Make the textarea wider than other inputs */
+/* Make the textarea wider than other inputs. */
 textarea {
   width: 80%;
 }
 
-/* Ensures the checkbox doesn't have a 50% width like other input fields */
+/* Ensures the checkbox doesn't have a 50% width like other input fields. */
 #checkbox {
   width: 0;
 }
@@ -322,7 +311,7 @@ fieldset {
   margin: 0;
 }
 
-/* Misc body elements */
+/* Misc body elements. */
 
 hr {
   color: var(--border);
@@ -335,13 +324,17 @@ mark {
   background: var(--accent-light);
 }
 
-main img {
-  max-width: 100%;
-  border-radius: 5px;
-}
-
 figure {
   margin: 0;
+}
+
+figure img {
+  display: block;
+  border-radius: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.5rem;
+  width: 50%;
 }
 
 figcaption {
@@ -365,13 +358,13 @@ cite {
   font-style: normal;
 }
 
-/* Use mono font for code like elements */
+/* Use mono font for code like elements. */
+
 code,
 pre,
 kbd,
 samp {
   font-family: var(--mono-font);
-  font-size: 1.1rem;
   color: var(--code);
 }
 
@@ -391,7 +384,7 @@ pre {
   border-radius: 5px;
 }
 
-/* Fix embedded code within pre */
+/* Fix embedded code within pre. */
 pre code {
   color: var(--text);
   background: none;
@@ -399,21 +392,25 @@ pre code {
   padding: 0;
 }
 
-/* Make tap targets larger */
+/* Make tap targets larger. */
 li {
   margin: 8px;
 }
 
+/* Use monospace font in a text area. */
 textarea {
   font-family: 'Fira Code', monospace;
   width: 100%;
 }
+
+/* Flash messages. */
 
 .flash {
   padding: 10px 0;
   text-align: center;
   color: #fff;
   display: block;
+  border-radius: 5px;
 }
 
 .flash a {
