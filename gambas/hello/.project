@@ -1,0 +1,18 @@
+# Gambas Project File 3.0
+Title=Hello, world!
+Startup=FMain
+Version=0.0.3
+Component=gb.image
+Component=gb.gui
+Component=gb.form
+TabSize=2
+Language=en_US
+Maintainer=Ilya Mateyko
+Address=me@astrophena.name
+Url=astrophena.name
+License=Other License(s)
+PackageName=hello-0.0.3
+Packager=1
+Systems=autotools,debian
+Menus=debian:"Help"
+Groups=debian:"misc"
