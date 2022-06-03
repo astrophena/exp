@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	_ "embed"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"html"
@@ -23,6 +24,8 @@ import (
 	"time"
 
 	_ "github.com/tailscale/sqlite"
+	"go.astrophena.name/exp/cmd"
+	"go.astrophena.name/exp/version"
 )
 
 var (
@@ -34,10 +37,11 @@ var (
 )
 
 func main() {
-	log.SetFlags(0)
+	cmd.SetDescription("Playground for SQLite databases.")
+	cmd.SetArgsUsage("[database] [flags]")
 
 	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
-	flag.Parse()
+	cmd.HandleStartup()
 
 	dbPath := flag.Arg(0)
 	if dbPath == "" {
@@ -102,6 +106,14 @@ func newServer(dbPath string) (*server, error) {
 	s.mux.Handle("/schema", http.RedirectHandler("/?"+schemaQuery.Encode(), http.StatusFound))
 	s.mux.HandleFunc("/style.css", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeContent(w, r, "style.css", time.Now(), strings.NewReader(css))
+	})
+	s.mux.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+		j, err := json.Marshal(version.Version())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write(j)
 	})
 
 	return s, nil

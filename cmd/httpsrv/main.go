@@ -18,13 +18,15 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
 	log.SetFlags(0)
 
 	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
-	flag.Parse()
+	cmd.HandleStartup()
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()

@@ -8,16 +8,17 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
-	log.SetFlags(0)
-
+	cmd.SetDescription("Renames files sequentially.")
 	var (
-		dir   = flag.String("dir", ".", "modify files in `path`")
-		start = flag.Int("start", 1, "start from")
+		dir   = flag.String("dir", ".", "Rename files in `path`.")
+		start = flag.Int("start", 1, "Start from `number`.")
 	)
-	flag.Parse()
+	cmd.HandleStartup()
 
 	fullDir, err := filepath.Abs(*dir)
 	if err != nil {

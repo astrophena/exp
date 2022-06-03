@@ -3,28 +3,29 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"flag"
 	"log"
 	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
-	log.SetFlags(0)
+	cmd.SetDescription("cmdtop displays the top of most used Bash commands.")
+	cmd.SetArgsUsage("[num] [flags]")
+	cmd.HandleStartup()
 
 	num := int64(10)
-	if len(os.Args) > 1 {
-		if os.Args[1] == "help" || os.Args[1] == "-h" || os.Args[1] == "--help" || os.Args[1] == "-help" {
-			fmt.Fprintf(os.Stderr, "cmdtop displays the top of most used Bash commands.\n\nUsage: cmdtop [num]\n")
-			return
-		}
+	args := flag.Args()
+	if len(args) > 0 {
 		var err error
-		num, err = strconv.ParseInt(os.Args[1], 10, 64)
+		num, err = strconv.ParseInt(args[0], 10, 64)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("Invalid number of commands: %v", err)
 		}
 	}
 
@@ -51,28 +52,25 @@ func main() {
 			m[cmd[0]]++
 		}
 	}
-
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 
-	// https://stackoverflow.com/a/44380276
 	type kv struct {
-		Key   string
-		Value int
+		key   string
+		value int
 	}
 	var ss []kv
 	for k, v := range m {
 		ss = append(ss, kv{k, v})
 	}
 	sort.Slice(ss, func(i, j int) bool {
-		return ss[i].Value > ss[j].Value
+		return ss[i].value > ss[j].value
 	})
-
 	for i, kv := range ss {
 		if int64(i) == num {
 			break
 		}
-		log.Printf("%d. %s (%d)", i+1, kv.Key, kv.Value)
+		log.Printf("%d. %s (%d)", i+1, kv.key, kv.value)
 	}
 }
