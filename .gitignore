@@ -1,10 +1,2 @@
-dist
-
-*.exe
-*.syso
-
-db.sqlite3
 __pycache__
-venv
-
 node_modules

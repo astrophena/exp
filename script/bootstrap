@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname $0)/.."
+
+goInstall() {
+	command -v "$1" &>/dev/null || {
+		echo "==> Installing $1..."
+		go install -ldflags="-s -w -buildid=" -trimpath "$2@latest"
+	}
+}
+
+git config core.hooksPath script/hooks
+if ! command -v prettier &>/dev/null; then
+	npm install -g prettier prettier-plugin-go-template
+fi
+goInstall goimports golang.org/x/tools/cmd/goimports
+goInstall shfmt mvdan.cc/sh/v3/cmd/shfmt
+goInstall actionlint github.com/rhysd/actionlint/cmd/actionlint

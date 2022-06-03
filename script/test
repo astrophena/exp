@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+if [[ ! -L "$0" ]]; then
+	cd "$(dirname $0)/.."
+else
+	# Symlinked. Called from a Git hook.
+	GIT_HOOK="true"
+	cd "$(dirname $0)/../.."
+fi
+
+script/bootstrap
+
+goTest() {
+	# Show 'go test' output only if it failed.
+	set +e
+	out="$(CGO_ENABLED=0 go test "$@" 2>&1)"
+	ec="$?"
+	[[ "$ec" != "0" ]] && echo >&2 "$out" && exit "$ec"
+	set -e
+}
+
+if [[ ! -z "${1:-}" ]]; then
+	echo "==> Testing ${pkg:-$1}..."
+	if [[ "$1" != ./* ]]; then
+		pkg="./$1/..."
+	else
+		pkg="$1/..."
+	fi
+	goTest "$pkg"
+	exit 0
+else
+	pkg="./..."
+fi
+
+if [[ ! -z "${CI:-}" ]] || [[ ! -z "${GIT_HOOK:-}" ]]; then
+	echo "==> Linting..."
+	goimports -d .
+	shfmt -d .
+	prettier --check --loglevel warn .
+	actionlint .github/workflows/*.yml
+else
+	echo "==> Formatting..."
+	goimports -w .
+	shfmt -w .
+	prettier --write --loglevel warn .
+fi
+
+echo "==> Running the tests..."
+goTest "$pkg"

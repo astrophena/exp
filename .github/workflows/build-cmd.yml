@@ -37,11 +37,13 @@ jobs:
             ~/go/pkg/mod
             ~/.cache/go-build
           key: "${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}"
+      - name: 'Test'
+        run: 'script/test cmd/${{ matrix.cmd }}'
       - name: 'Configure toolchain for Android builds'
         env:
           GOARCH: '${{ matrix.goarch }}'
         if: "matrix.goos == 'android'"
-        run: 'script/ci-configure-android'
+        run: 'script/ci-android-ndk'
       - name: 'Build'
         env:
           CGO_ENABLED: '1'
