@@ -27,6 +27,7 @@ if [[ ! -z "${1:-}" ]]; then
 	else
 		pkg="$1/..."
 	fi
+	staticcheck "$pkg"
 	goTest "$pkg"
 	exit 0
 else
@@ -47,4 +48,5 @@ else
 fi
 
 echo "==> Running the tests..."
+staticcheck "$pkg"
 goTest "$pkg"
