@@ -12,3 +12,4 @@ name="debian"
 }
 
 curl -L -o "$name.qcow2" "$image_url"
+qemu-img resize "$name.qcow2" 10G # Default Debian image is 2G
