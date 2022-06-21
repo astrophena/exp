@@ -9,4 +9,4 @@ moment.
 
 ## License
 
-[MIT](LICENSE.md) © [Ilya Mateyko](https://github.com/astrophena)
+[ISC](LICENSE.md) © [Ilya Mateyko](https://github.com/astrophena)
