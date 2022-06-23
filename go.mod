@@ -9,4 +9,7 @@ require (
 
 require github.com/tailscale/sqlite v0.0.0-20220519153208-6bbaa1386805
 
-require github.com/andybalholm/cascadia v1.3.1 // indirect
+require (
+	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/godbus/dbus/v5 v5.1.0 // indirect
+)
