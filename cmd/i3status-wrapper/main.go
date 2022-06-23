@@ -59,7 +59,7 @@ import (
 )
 
 // i3bar struct represents a block in the i3bar protocol
-// http://i3wm.org/docs/i3bar-protocol.html
+// (https://i3wm.org/docs/i3bar-protocol.html).
 type i3bar struct {
 	Name                string `json:"name,omitempty"`
 	Instance            string `json:"instance,omitempty"`
@@ -118,14 +118,12 @@ func (c *customCommand) execute() ([]byte, error) {
 func (c *customCommand) runJob(done chan int) {
 	cmdStatusOutput, err := c.execute()
 	if err != nil {
-		fmt.Println("Cannot run command:", c.command, ":", err.Error())
-		os.Exit(1)
+		log.Fatalf("Can't run command %v: %v", c.command, err)
 	}
 
-	// Here we try to parse the output as JSON with the i3bar format. If it fails
+	// Try to parse the output as JSON with the i3bar format. If it fails
 	// the output will be processed as a regular string.
 	err = json.Unmarshal(cmdStatusOutput, c.result)
-
 	if err != nil {
 		// Not JSON, using custom fields and string output as FullText.
 		c.result.Name = "customCmd"

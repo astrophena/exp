@@ -1,4 +1,4 @@
-// Command playing prints a currently playing track title. Based on
+// Command playing prints a currently playing media title. Based on
 // https://github.com/leberKleber/go-mpris/blob/main/player.go.
 package main
 
@@ -14,7 +14,9 @@ import (
 )
 
 func main() {
-	prepend := flag.String("prepend", "", "Prepend this to the track title.")
+	cmd.SetDescription("Prints the currently playing media title.")
+
+	prepend := flag.String("prepend", "", "Prepend this to the media title.")
 	cmd.HandleStartup()
 
 	title, err := getTitle()
@@ -67,11 +69,9 @@ func listPlayers(bus *dbus.Conn) ([]string, error) {
 	const prefix = "org.mpris.MediaPlayer2."
 
 	var names, players []string
-
 	if err := bus.BusObject().Call("org.freedesktop.DBus.ListNames", 0).Store(&names); err != nil {
 		return players, err
 	}
-
 	for _, name := range names {
 		if strings.HasPrefix(name, prefix) {
 			players = append(players, name)
