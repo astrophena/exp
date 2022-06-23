@@ -1,6 +1,8 @@
 /*
-Command i3status-wrapper is a wrapper for the i3status command. It is forked
-from https://github.com/rgerardi/i3status-wrapper.
+Command i3status-wrapper is a wrapper for the i3status command. It displays
+output from custom commands and shows the currently playing media title.
+
+It is forked from https://github.com/rgerardi/i3status-wrapper.
 
 Usage
 
@@ -56,6 +58,8 @@ import (
 	"time"
 
 	"go.astrophena.name/exp/cmd"
+
+	"github.com/godbus/dbus/v5"
 )
 
 // i3bar struct represents a block in the i3bar protocol
@@ -195,12 +199,17 @@ func main() {
 			go cmd.runJob(done)
 		}
 
-		customBlocks := make([]*i3bar, len(cmdList), len(blocks)+len(cmdList))
+		customBlocks := make([]*i3bar, len(cmdList), len(blocks)+len(cmdList)+1)
 		for i := 0; i < len(cmdList); i++ {
 			d := <-done
 			customBlocks[d] = cmdList[d].result
 		}
 		close(done)
+
+		customBlocks = append(customBlocks, &i3bar{
+			Name:     "playing",
+			FullText: playing(),
+		})
 		customBlocks = append(customBlocks, blocks...)
 
 		if err := stdOutEnc.Encode(customBlocks); err != nil {
@@ -210,4 +219,61 @@ func main() {
 		// A comma is required to signal another entry in the array to i3bar.
 		fmt.Print(",")
 	}
+}
+
+// playing returns the currently playing media title.
+func playing() string {
+	title, err := getPlayingTitle()
+	if err != nil {
+		return fmt.Sprintf("Error: %v", err)
+	}
+	if title == "" {
+		title = "Nothing is currently playing."
+	}
+	return "" + " " + title
+}
+
+func getPlayingTitle() (string, error) {
+	bus, err := dbus.SessionBus()
+	if err != nil {
+		return "", err
+	}
+
+	players, err := listPlayers(bus)
+	if err != nil {
+		return "", err
+	}
+	if len(players) == 0 {
+		return "", nil
+	}
+	curPlayer := bus.Object(players[0], "/org/mpris/MediaPlayer2")
+
+	metadataObj, err := curPlayer.GetProperty("org.mpris.MediaPlayer2.Player.Metadata")
+	if err != nil {
+		return "", err
+	}
+	metadata := metadataObj.Value().(map[string]dbus.Variant)
+
+	title := metadata["xesam:title"].Value().(string)
+	if title == "" || strings.Contains(title, "Yandex Music") {
+		return "", nil
+	}
+
+	return title, nil
+}
+
+func listPlayers(bus *dbus.Conn) ([]string, error) {
+	const prefix = "org.mpris.MediaPlayer2."
+
+	var names, players []string
+	if err := bus.BusObject().Call("org.freedesktop.DBus.ListNames", 0).Store(&names); err != nil {
+		return players, err
+	}
+	for _, name := range names {
+		if strings.HasPrefix(name, prefix) {
+			players = append(players, name)
+		}
+	}
+
+	return players, nil
 }
