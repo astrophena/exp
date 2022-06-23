@@ -68,7 +68,7 @@ type i3bar struct {
 	Name                string `json:"name,omitempty"`
 	Instance            string `json:"instance,omitempty"`
 	Markup              string `json:"markup,omitempty"`
-	FullText            string `json:"full_text,omitempty"`
+	FullText            string `json:"full_text"`
 	Color               string `json:"color,omitempty"`
 	ShortText           string `json:"short_text,omitempty"`
 	Background          string `json:"background,omitempty"`
