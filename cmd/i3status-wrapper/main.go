@@ -143,6 +143,11 @@ func main() {
 	cmd.SetDescription("Wrapper for the i3status command. See https://go.astrophena.name/exp/cmd/i3status-wrapper for full documentation.")
 	cmd.SetArgsUsage("[commands...]")
 
+	bus, err := dbus.SessionBus()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	timeout := flag.Duration("timeout", 5*time.Second, "Timeout for custom command execution.")
 	cmd.HandleStartup()
 
@@ -165,23 +170,18 @@ func main() {
 	// The first line is a header indicating to i3bar that JSON will be used.
 	var header i3barHeader
 
-	err := stdInDec.Decode(&header)
-	if err != nil {
-		fmt.Println("Cannot read input:", err.Error())
-		os.Exit(1)
+	if err := stdInDec.Decode(&header); err != nil {
+		log.Fatalf("Can't read input: %v", err)
 	}
 
-	err = stdOutEnc.Encode(header)
-	if err != nil {
-		fmt.Println("Cannot encode output json:", err.Error())
-		os.Exit(1)
+	if err = stdOutEnc.Encode(header); err != nil {
+		log.Fatalf("Can't encode output JSON: %v", err)
 	}
 
 	// The second line is just the start of the endless array '['.
 	t, err := stdInDec.Token()
 	if err != nil {
-		fmt.Println("Cannot read input:", err.Error())
-		os.Exit(1)
+		log.Fatalf("Can't read input: %v", err)
 	}
 
 	fmt.Println(t)
@@ -208,7 +208,7 @@ func main() {
 
 		customBlocks = append(customBlocks, &i3bar{
 			Name:     "playing",
-			FullText: playing(),
+			FullText: playing(bus),
 		})
 		customBlocks = append(customBlocks, blocks...)
 
@@ -222,8 +222,8 @@ func main() {
 }
 
 // playing returns the currently playing media title.
-func playing() string {
-	title, err := getPlayingTitle()
+func playing(bus *dbus.Conn) string {
+	title, err := getPlayingTitle(bus)
 	if err != nil {
 		return fmt.Sprintf("Error: %v", err)
 	}
@@ -233,12 +233,7 @@ func playing() string {
 	return "" + " " + title
 }
 
-func getPlayingTitle() (string, error) {
-	bus, err := dbus.SessionBus()
-	if err != nil {
-		return "", err
-	}
-
+func getPlayingTitle(bus *dbus.Conn) (string, error) {
 	players, err := listPlayers(bus)
 	if err != nil {
 		return "", err
