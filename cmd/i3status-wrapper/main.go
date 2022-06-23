@@ -49,10 +49,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 // i3bar struct represents a block in the i3bar protocol
@@ -73,7 +76,7 @@ type i3bar struct {
 	SeparatorBlockWidth int    `json:"separator_block_width,omitempty"`
 }
 
-// i3barHeader represents the i3bar header according to the i3bar protocol
+// i3barHeader represents the i3bar header according to the i3bar protocol.
 type i3barHeader struct {
 	Version     int  `json:"version"`
 	StopSignal  int  `json:"stop_signal,omitempty"`
@@ -81,28 +84,27 @@ type i3barHeader struct {
 	ClickEvents bool `json:"click_events,omitempty"`
 }
 
-// customCommand represents a custom command to be executed
-// contains details about the command to be executed, its arguments (if any),
-// timeout, the result block and the order in which the result should be displayed
+// customCommand represents a custom command to be executed.
 type customCommand struct {
 	command string
 	args    []string
 	timeout time.Duration
 	result  *i3bar
-	order   int
+	order   int // order in which the result should be displayed
 }
 
 func (c *customCommand) execute() ([]byte, error) {
-	// Adding a context with timeout to handle cases of long running commands
+	// Adding a context with timeout to handle cases of long running commands.
 	ctx, cancel := context.WithTimeout(context.Background(), c.timeout)
 	defer cancel()
 
 	customCmd := exec.CommandContext(ctx, c.command, c.args...)
 	cmdStatusOutput, err := customCmd.Output()
 
-	// If the deadline was exceeded, just output that to the status instead of failing
+	// If the deadline was exceeded, just output that to the status instead of
+	// failing.
 	if ctx.Err() == context.DeadlineExceeded {
-		return []byte("Timed out"), nil
+		return []byte("Timed out."), nil
 	}
 
 	if err != nil {
@@ -120,37 +122,32 @@ func (c *customCommand) runJob(done chan int) {
 		os.Exit(1)
 	}
 
-	// Here we try to parse the output as JSON with the i3bar format
-	// If it fails the output will be processed as a regular string
+	// Here we try to parse the output as JSON with the i3bar format. If it fails
+	// the output will be processed as a regular string.
 	err = json.Unmarshal(cmdStatusOutput, c.result)
 
 	if err != nil {
-		// Not JSON, using custom fields and string output as FullText
+		// Not JSON, using custom fields and string output as FullText.
 		c.result.Name = "customCmd"
 		c.result.Instance = c.command
 		c.result.FullText = string(cmdStatusOutput)
 	}
 
-	// Send status out to channel, indicates both completion and order
+	// Send status out to channel, indicates both completion and order.
 	done <- c.order
 }
 
 func main() {
-	// Defining a timeout flag to give control to the user on when to timeout long running commands
-	// It will be used by the context creation command in the loop below
-	timeout := flag.Duration("timeout", 5*time.Second, "timeout for custom command execution")
-	flag.Parse()
+	cmd.SetDescription("Wrapper for the i3status command. See https://go.astrophena.name/exp/cmd/i3status-wrapper for full documentation.")
+	cmd.SetArgsUsage("[commands...]")
 
-	// Defining an slice to hold the list of custom commands to be executed every iteration
+	timeout := flag.Duration("timeout", 5*time.Second, "Timeout for custom command execution.")
+	cmd.HandleStartup()
+
 	cmdList := make([]*customCommand, len(flag.Args()))
 
-	// Custom commands to be included in the output should be provided
-	// as arguments to i3status-wrapper. They will be parsed by flag.Args
 	for k, cmd := range flag.Args() {
-
-		// Commands are split by a blank space to separate arguments if any
 		cmdSplit := strings.Split(cmd, " ")
-
 		cmdList[k] = &customCommand{
 			command: cmdSplit[0],
 			args:    cmdSplit[1:],
@@ -163,7 +160,7 @@ func main() {
 	stdInDec := json.NewDecoder(os.Stdin)
 	stdOutEnc := json.NewEncoder(os.Stdout)
 
-	// The first line is a header indicating to i3bar that JSON will be used
+	// The first line is a header indicating to i3bar that JSON will be used.
 	var header i3barHeader
 
 	err := stdInDec.Decode(&header)
@@ -178,7 +175,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// The second line is just the start of the endless array '['
+	// The second line is just the start of the endless array '['.
 	t, err := stdInDec.Token()
 	if err != nil {
 		fmt.Println("Cannot read input:", err.Error())
@@ -187,52 +184,32 @@ func main() {
 
 	fmt.Println(t)
 
-	// Start of the main i3status loop (endless array)
 	for stdInDec.More() {
-
 		// For every iteration of the loop we capture the blocks provided by i3status
-		// and append custom blocks to it before sending it to i3bar
+		// and append custom blocks to it before sending it to i3bar.
 		var blocks []*i3bar
-
-		err := stdInDec.Decode(&blocks)
-
-		if err != nil {
-			fmt.Println("Cannot decode input json:", err.Error())
-			os.Exit(1)
+		if err := stdInDec.Decode(&blocks); err != nil {
+			log.Fatalf("Can't decode input JSON: %v", err.Error())
 		}
 
-		// Creating an empty slice of i3bar blocks to be filled with custom blocks
-		customBlocks := make([]*i3bar, len(cmdList), len(blocks)+len(cmdList))
-
-		// Creating a channel to receive the status for the goroutine that runs
-		// the custom commands asynchronously (contains the order of the finished command)
 		done := make(chan int)
-
-		// Execute every custom command provided as an argument to i3status-wrapper
 		for _, cmd := range cmdList {
 			go cmd.runJob(done)
 		}
 
-		// Process custom commands results as they become available
+		customBlocks := make([]*i3bar, len(cmdList), len(blocks)+len(cmdList))
 		for i := 0; i < len(cmdList); i++ {
 			d := <-done
-			// d contains the order provided during creation. It will be  used to
-			// position commands correctly regardless of results availability order
 			customBlocks[d] = cmdList[d].result
 		}
 		close(done)
-
-		// Appending blocks from i3status to the custom blocks
 		customBlocks = append(customBlocks, blocks...)
 
-		// Enconding & Sending output back to stdout to be processed by i3bar
-		err = stdOutEnc.Encode(customBlocks)
-		if err != nil {
-			fmt.Println("Cannot encode output json:", err.Error())
-			os.Exit(1)
+		if err := stdOutEnc.Encode(customBlocks); err != nil {
+			log.Fatalf("Can't encode input JSON: %v", err.Error())
 		}
 
-		// A comma is required to signal another entry in the array to i3bar
+		// A comma is required to signal another entry in the array to i3bar.
 		fmt.Print(",")
 	}
 }
