@@ -8,51 +8,59 @@ import (
 	"log"
 	"strings"
 
-	"github.com/godbus/dbus/v5"
 	"go.astrophena.name/exp/cmd"
+
+	"github.com/godbus/dbus/v5"
 )
 
 func main() {
 	prepend := flag.String("prepend", "", "Prepend this to the track title.")
 	cmd.HandleStartup()
 
-	if err := run(*prepend); err != nil {
+	title, err := getTitle()
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	var sb strings.Builder
+	if *prepend != "" {
+		sb.WriteString(*prepend + " ")
+	}
+	if title != "" {
+		sb.WriteString(title)
+	} else {
+		sb.WriteString("Nothing is currently playing.")
+	}
+	fmt.Println(sb.String())
 }
 
-func run(prepend string) error {
+func getTitle() (string, error) {
 	bus, err := dbus.SessionBus()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	players, err := listPlayers(bus)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if len(players) == 0 {
-		return nil
+		return "", nil
 	}
-
-	// TODO: maybe use multiple players, not the first one?
 	curPlayer := bus.Object(players[0], "/org/mpris/MediaPlayer2")
 
 	metadataObj, err := curPlayer.GetProperty("org.mpris.MediaPlayer2.Player.Metadata")
 	if err != nil {
-		return err
+		return "", err
 	}
 	metadata := metadataObj.Value().(map[string]dbus.Variant)
 
 	title := metadata["xesam:title"].Value().(string)
-	// LOL
 	if title == "" || strings.Contains(title, "Yandex Music") {
-		fmt.Println(prepend + " " + "Nothing is currently playing.")
-		return nil
+		return "", nil
 	}
-	fmt.Println(prepend + " " + title)
 
-	return nil
+	return title, nil
 }
 
 func listPlayers(bus *dbus.Conn) ([]string, error) {
