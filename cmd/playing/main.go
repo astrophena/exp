@@ -43,7 +43,6 @@ func run(prepend string) error {
 		return err
 	}
 	metadata := metadataObj.Value().(map[string]dbus.Variant)
-	log.Printf("metadata = %+v", metadata)
 
 	title := metadata["xesam:title"].Value().(string)
 	// LOL
