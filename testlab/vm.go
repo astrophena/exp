@@ -29,7 +29,7 @@ func main() {
 	}
 
 	if *ssh {
-		ssh := exec.Command("ssh", "-p", "8022", "localhost")
+		ssh := exec.Command("ssh", "-p", "8022", "-o", "StrictHostKeyChecking=no", "localhost")
 		ssh.Stdin = os.Stdin
 		ssh.Stdout = os.Stdout
 		ssh.Stderr = os.Stderr
