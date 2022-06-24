@@ -225,10 +225,10 @@ func main() {
 func playing(bus *dbus.Conn) string {
 	title, err := getPlayingTitle(bus)
 	if err != nil {
-		return fmt.Sprintf("Error: %v", err)
+		title = fmt.Sprintf("Error: %v", err)
 	}
 	if title == "" {
-		title = "Nothing is currently playing."
+		return title
 	}
 	return "" + " " + title
 }
