@@ -12,19 +12,32 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
 	log.SetFlags(0)
 
 	userData := flag.String("user-data", "", "Path to the user data `file`.")
-	flag.Parse()
+	ssh := flag.Bool("ssh", false, "SSH into machine")
+	cmd.HandleStartup()
 
 	name := "debian"
 	if len(flag.Args()) > 0 {
 		name = flag.Args()[0]
 	}
 
+	if *ssh {
+		ssh := exec.Command("ssh", "-p", "8022", "localhost")
+		ssh.Stdin = os.Stdin
+		ssh.Stdout = os.Stdout
+		ssh.Stderr = os.Stderr
+		if err := ssh.Run(); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 	if err := vm(name, *userData); err != nil {
 		log.Fatal(err)
 	}
