@@ -143,13 +143,13 @@ func main() {
 	cmd.SetDescription("Wrapper for the i3status command. See https://go.astrophena.name/exp/cmd/i3status-wrapper for full documentation.")
 	cmd.SetArgsUsage("[commands...]")
 
+	timeout := flag.Duration("timeout", 5*time.Second, "Timeout for custom command execution.")
+	cmd.HandleStartup()
+
 	bus, err := dbus.SessionBus()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	timeout := flag.Duration("timeout", 5*time.Second, "Timeout for custom command execution.")
-	cmd.HandleStartup()
 
 	cmdList := make([]*customCommand, len(flag.Args()))
 
@@ -164,33 +164,31 @@ func main() {
 		}
 	}
 
-	stdInDec := json.NewDecoder(os.Stdin)
-	stdOutEnc := json.NewEncoder(os.Stdout)
+	var (
+		dec = json.NewDecoder(os.Stdin)
+		enc = json.NewEncoder(os.Stdout)
+	)
 
 	// The first line is a header indicating to i3bar that JSON will be used.
 	var header i3barHeader
-
-	if err := stdInDec.Decode(&header); err != nil {
+	if err := dec.Decode(&header); err != nil {
 		log.Fatalf("Can't read input: %v", err)
 	}
-
-	if err = stdOutEnc.Encode(header); err != nil {
+	if err = enc.Encode(header); err != nil {
 		log.Fatalf("Can't encode output JSON: %v", err)
 	}
-
 	// The second line is just the start of the endless array '['.
-	t, err := stdInDec.Token()
+	t, err := dec.Token()
 	if err != nil {
 		log.Fatalf("Can't read input: %v", err)
 	}
-
 	fmt.Println(t)
 
-	for stdInDec.More() {
+	for dec.More() {
 		// For every iteration of the loop we capture the blocks provided by i3status
 		// and append custom blocks to it before sending it to i3bar.
 		var blocks []*i3bar
-		if err := stdInDec.Decode(&blocks); err != nil {
+		if err := dec.Decode(&blocks); err != nil {
 			log.Fatalf("Can't decode input JSON: %v", err.Error())
 		}
 
@@ -212,7 +210,7 @@ func main() {
 		})
 		customBlocks = append(customBlocks, blocks...)
 
-		if err := stdOutEnc.Encode(customBlocks); err != nil {
+		if err := enc.Encode(customBlocks); err != nil {
 			log.Fatalf("Can't encode input JSON: %v", err.Error())
 		}
 
