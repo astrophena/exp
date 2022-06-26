@@ -2,26 +2,52 @@
 Command i3status-wrapper is a wrapper for the i3status command. It displays
 output from custom commands and shows the currently playing media title.
 
-It is forked from https://github.com/rgerardi/i3status-wrapper.
-
 Usage
 
 Simply pipe the output for i3status to i3status-wrapper and execute that
-instead of i3status, for example in the i3 config file. i3status must be
-configured to output results in the i3bar JSON format.
+instead of i3status, for example in the i3 config file:
 
- i3status | i3status-wrapper
+ bar {
+   status_command i3status | i3status-wrapper
+ }
+
+i3status must be configured to output results in the i3bar JSON format:
+
+ # ~/.config/i3status/config
+ general {
+   output_format = "i3bar"
+ }
 
 i3status-wrapper will run custom commands provided as arguments and add their
 output before the i3status output in order:
 
- i3status | i3status-wrapper custom-script1.sh custom-script2.sh
+ bar {
+   status_command i3status | i3status-wrapper custom-script1.sh custom-script2.sh
+ }
 
 If your command requires arguments, then the command and arguments should be wrapped in double quotes:
 
- i3status | i3status-wrapper "custom-script1.sh arg1" custom-script2.sh
+ bar {
+   status_command i3status | i3status-wrapper "custom-script1.sh arg1" custom-script2.sh
+ }
 
 License
+
+© 2022 Ilya Mateyko
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
+
+Forked from https://github.com/rgerardi/i3status-wrapper:
 
 Copyright (c) 2017 Ricardo Gerardi
 
@@ -127,8 +153,7 @@ func (c *customCommand) runJob(done chan int) {
 
 	// Try to parse the output as JSON with the i3bar format. If it fails
 	// the output will be processed as a regular string.
-	err = json.Unmarshal(cmdStatusOutput, c.result)
-	if err != nil {
+	if err := json.Unmarshal(cmdStatusOutput, c.result); err != nil {
 		// Not JSON, using custom fields and string output as FullText.
 		c.result.Name = "customCmd"
 		c.result.Instance = c.command
