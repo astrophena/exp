@@ -13,8 +13,7 @@ import (
 )
 
 var opts struct {
-	description string
-	argsUsage   string
+	description, argsUsage string
 }
 
 // SetDescription sets the command description.

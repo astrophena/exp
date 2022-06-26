@@ -23,9 +23,10 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/tailscale/sqlite"
 	"go.astrophena.name/exp/cmd"
 	"go.astrophena.name/exp/version"
+
+	_ "github.com/tailscale/sqlite"
 )
 
 var (

@@ -1,12 +1,14 @@
-// This is an example of a Python program interacting with the Go
-// library.
-//
-// Hacking
-//
-// Run this:
-//
-//  $ make
-//  $ python prog.py
+/*
+This is an example of a Python program interacting with the library written in
+Go.
+
+Hacking
+
+Run this:
+
+ $ make
+ $ python prog.py
+*/
 package main
 
 import "C"
