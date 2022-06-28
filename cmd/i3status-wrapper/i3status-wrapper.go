@@ -169,6 +169,7 @@ func (c *customCommand) runJob(done chan int) {
 func main() {
 	cmd.SetDescription("Wrapper for the i3status command. See https://go.astrophena.name/exp/cmd/i3status-wrapper for full documentation.")
 	cmd.SetArgsUsage("[commands...]")
+	log.SetPrefix("i3status-wrapper: ")
 
 	timeout := flag.Duration("timeout", 5*time.Second, "Timeout for custom command execution.")
 	cmd.HandleStartup()
