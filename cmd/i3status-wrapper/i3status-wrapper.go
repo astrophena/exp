@@ -217,7 +217,7 @@ func main() {
 		// and append custom blocks to it before sending it to i3bar.
 		var blocks []*i3bar
 		if err := dec.Decode(&blocks); err != nil {
-			log.Fatalf("Can't decode input JSON: %v", err.Error())
+			log.Fatalf("Can't decode input JSON: %v", err)
 		}
 
 		done := make(chan int)
@@ -239,7 +239,7 @@ func main() {
 		customBlocks = append(customBlocks, blocks...)
 
 		if err := enc.Encode(customBlocks); err != nil {
-			log.Fatalf("Can't encode input JSON: %v", err.Error())
+			log.Fatalf("Can't encode input JSON: %v", err)
 		}
 
 		// A comma is required to signal another entry in the array to i3bar.
