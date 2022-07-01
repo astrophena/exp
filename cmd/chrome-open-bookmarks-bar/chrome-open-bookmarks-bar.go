@@ -40,18 +40,23 @@ func main() {
 	if !ok {
 		log.Fatalf("there are no bookmarks in the bookmarks bar")
 	}
-	var args []string
-	// Enable dark mode.
-	args = append(args, "--enable-features=WebUIDarkMode", "--force-dark-mode")
-	for _, bookmark := range bar.Children {
-		args = append(args, bookmark.URL)
-	}
 
 	chrome, err := exec.LookPath("google-chrome-stable")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := syscall.Exec(chrome, args, os.Environ()); err != nil {
+
+	// By convention, the first of these strings (i.e., argv[0]) should contain
+	// the filename associated with the file being executed
+	// (https://man7.org/linux/man-pages/man2/execve.2.html).
+	argv := []string{chrome}
+	// Enable dark mode.
+	argv = append(argv, "--enable-features=WebUIDarkMode", "--force-dark-mode")
+	for _, bookmark := range bar.Children {
+		argv = append(argv, bookmark.URL)
+	}
+
+	if err := syscall.Exec(chrome, argv, os.Environ()); err != nil {
 		log.Fatal(err)
 	}
 }
