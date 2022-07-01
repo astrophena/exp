@@ -1,6 +1,6 @@
 //go:build linux
 
-// Command chrome-open-bookmarks-bar opens  everything in the bookmarks bar at
+// Command chrome-open-bookmarks-bar opens everything in the bookmarks bar at
 // once in a separate tabs.
 package main
 
