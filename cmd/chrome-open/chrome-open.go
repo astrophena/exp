@@ -1,21 +1,38 @@
 //go:build linux
 
-// Command chrome-open-bookmarks-bar opens everything in the bookmarks bar at
-// once in a separate tabs.
+// Command chrome-open is a Chrome wrapper that does some useful things.
 package main
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"syscall"
+
+	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
-	log.SetPrefix("chrome-open-bookmarks-bar: ")
+	cmd.SetArgsUsage("[option] [path|url]")
+	cmd.SetDescription("Chrome wrapper that does some useful things. To see Chrome help, run 'google-chrome --help'.")
 
+	openBookmarksBar := flag.Bool("bookmarks-bar", false, "Open everything in the bookmarks bar.")
+	cmd.HandleStartup()
+
+	var args []string
+	if len(os.Args) > 1 {
+		args = os.Args[1:]
+	}
+	if *openBookmarksBar {
+		args = getBookmarksBar()
+	}
+	execChrome(args)
+}
+
+func getBookmarksBar() []string {
 	configDir, err := os.UserConfigDir()
 	if err != nil {
 		log.Fatalf("os.UserConfigDir(): %v", err)
@@ -41,9 +58,17 @@ func main() {
 		log.Fatalf("there are no bookmarks in the bookmarks bar")
 	}
 
+	var urls []string
+	for _, bookmark := range bar.Children {
+		urls = append(urls, bookmark.URL)
+	}
+	return urls
+}
+
+func execChrome(args []string) {
 	chrome, err := exec.LookPath("google-chrome-stable")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to find Chrome binary: %v", err)
 	}
 
 	// By convention, the first of these strings (i.e., argv[0]) should contain
@@ -52,11 +77,9 @@ func main() {
 	argv := []string{chrome}
 	// Enable dark mode.
 	argv = append(argv, "--enable-features=WebUIDarkMode", "--force-dark-mode")
-	for _, bookmark := range bar.Children {
-		argv = append(argv, bookmark.URL)
-	}
+	argv = append(argv, args...)
 
 	if err := syscall.Exec(chrome, argv, os.Environ()); err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to exec Chrome binary: %v", err)
 	}
 }
