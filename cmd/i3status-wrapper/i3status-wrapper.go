@@ -2,6 +2,12 @@
 Command i3status-wrapper is a wrapper for the i3status command that displays
 output from custom commands and shows the currently playing media title.
 
+Installation
+
+If you have the latest Go installed:
+
+ $ go install go.astrophena.name/exp/cmd/i3status-wrapper@latest
+
 Usage
 
 Simply pipe the output for i3status to i3status-wrapper and execute that
