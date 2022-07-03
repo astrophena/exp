@@ -15,7 +15,7 @@ import (
 
 func main() {
 	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
-	cmd.SetDescription("Simple HTTP server that serves static files.")
+	cmd.SetDescription("Simple HTTP server that serves files.")
 	cmd.SetArgsUsage("[dir]")
 	cmd.HandleStartup()
 
