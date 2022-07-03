@@ -1,4 +1,4 @@
-// Command s is a simple HTTP server that serves static files.
+// Command s is a simple HTTP server that serves files.
 package main
 
 import (
