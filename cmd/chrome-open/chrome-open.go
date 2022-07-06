@@ -79,11 +79,7 @@ It launches Chrome with flags defined in $XDG_CONFIG_HOME/chrome-flags.conf
 	fmt.Fprintf(os.Stderr, "\nUsage: chrome-open [chrome-open and/or Chrome flags] [URL]\n\n")
 	fmt.Fprintf(os.Stderr, "chrome-open flags:\n\n")
 	flag.PrintDefaults()
-	fmt.Fprintf(os.Stderr, "\n")
-	if help, err := exec.Command("google-chrome", "--help").Output(); err == nil {
-		fmt.Fprintf(os.Stderr, "Chrome help:\n\n")
-		os.Stderr.Write(help)
-	}
+	fmt.Fprintf(os.Stderr, "\nTo see Chrome flags, run 'man google-chrome'.")
 }
 
 func getBookmarksBar(configDir string) []string {
