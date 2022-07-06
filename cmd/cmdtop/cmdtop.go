@@ -1,4 +1,4 @@
-// Command cmdtop displays the top of most used Bash commands.
+// Command cmdtop displays the top of most used commands in bash history.
 package main
 
 import (
@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	cmd.SetDescription("cmdtop displays the top of most used Bash commands.")
+	cmd.SetDescription("cmdtop displays the top of most used commands in bash history.")
 	cmd.SetArgsUsage("[num] [flags]")
 	cmd.HandleStartup()
 
