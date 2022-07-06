@@ -38,7 +38,11 @@ func main() {
 	)
 	flag.Parse()
 
-	if *i3Focus && !*openBookmarksBar {
+	var args []string
+	if flag.NArg() > 0 {
+		args = flag.Args()
+	}
+	if *i3Focus && len(args) == 0 && !*openBookmarksBar {
 		launched, err := focus()
 		if err != nil {
 			log.Printf("focus(): %v", err)
@@ -52,14 +56,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("os.UserConfigDir(): %v", err)
 	}
-
-	var args []string
-	if len(os.Args) > 1 {
-		args = os.Args[1:]
-	}
 	if *openBookmarksBar {
 		args = getBookmarksBar(configDir)
 	}
+
 	if err := run(*binary, configDir, args); err != nil {
 		log.Fatal(err)
 	}
@@ -76,10 +76,10 @@ It launches Chrome with flags defined in $XDG_CONFIG_HOME/chrome-flags.conf
 (~/.config/chrome-flags.conf if $XDG_CONFIG_HOME is not set).
 `
 	fmt.Fprint(os.Stderr, doc)
-	fmt.Fprintf(os.Stderr, "\nUsage: chrome-open [chrome-open and/or Chrome flags] [URL]\n\n")
+	fmt.Fprintf(os.Stderr, "\nUsage: chrome-open [flags] [URL]\n\n")
 	fmt.Fprintf(os.Stderr, "chrome-open flags:\n\n")
 	flag.PrintDefaults()
-	fmt.Fprintf(os.Stderr, "\nTo see Chrome flags, run 'man google-chrome'.")
+	fmt.Fprintf(os.Stderr, "\nTo see Chrome flags, run 'man google-chrome'.\n")
 }
 
 func getBookmarksBar(configDir string) []string {
