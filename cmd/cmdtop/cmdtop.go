@@ -29,12 +29,16 @@ func main() {
 		}
 	}
 
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
+	histfile, ok := os.LookupEnv("HISTFILE")
+	if !ok {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		histfile = filepath.Join(home, ".bash_history")
 	}
 
-	f, err := os.Open(filepath.Join(home, ".bash_history"))
+	f, err := os.Open(histfile)
 	if err != nil {
 		log.Fatal(err)
 	}
