@@ -4,8 +4,7 @@
 Command chrome-open is a Chrome launcher that can open all URLs in the bookmarks
 bar as a separate tabs.
 
-When running under i3 if Chrome is already running it focuses the Chrome window
-instead (this is disabled when -bookmarks-bar flag is passed).
+When running under i3 it also focuses the already or newly opened Chrome window.
 
 It launches Chrome with flags defined in $XDG_CONFIG_HOME/chrome-flags.conf
 (~/.config/chrome-flags.conf if $XDG_CONFIG_HOME is not set).
