@@ -21,9 +21,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 
 	"go.i3wm.org/i3/v4"
+)
+
+var (
+	openBookmarksBar = flag.Bool("bookmarks-bar", false, "Open everything in the bookmarks bar.")
+	i3Focus          = flag.Bool("i3-focus", true, "When running under i3, focus the current Chrome window if it's already running.")
+	binary           = flag.String("chrome-binary", "google-chrome-stable", "Chrome binary name.")
 )
 
 func main() {
@@ -31,11 +36,6 @@ func main() {
 	log.SetPrefix("chrome-open: ")
 
 	flag.Usage = usage
-	var (
-		openBookmarksBar = flag.Bool("bookmarks-bar", false, "Open everything in the bookmarks bar.")
-		i3Focus          = flag.Bool("i3-focus", true, "When running under i3, focus the current Chrome window if it's already running.")
-		binary           = flag.String("chrome-binary", "google-chrome-stable", "Chrome binary name.")
-	)
 	flag.Parse()
 
 	var args []string
@@ -60,7 +60,7 @@ func main() {
 		args = getBookmarksBar(configDir)
 	}
 
-	if err := run(*binary, configDir, args); err != nil {
+	if err := run(configDir, args); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -111,31 +111,27 @@ func getBookmarksBar(configDir string) []string {
 }
 
 func focus() (launched bool, err error) {
+	// Check if i3 is running.
+	if !i3.IsRunningHook() {
+		return false, nil
+	}
+
 	tree, err := i3.GetTree()
 	if err != nil {
 		return false, err
 	}
+
 	if win := tree.Root.FindChild(func(n *i3.Node) bool { return strings.HasSuffix(n.Name, "- Google Chrome") }); win != nil {
 		if _, err := i3.RunCommand(fmt.Sprintf(`[con_id="%d"] focus`, win.ID)); err != nil {
 			return true, err
 		}
 		return true, nil
 	}
+
 	return false, nil
 }
 
-func run(binary, configDir string, args []string) error {
-	// Find the Chrome binary.
-	chrome, err := exec.LookPath(binary)
-	if err != nil {
-		return fmt.Errorf("failed to find Chrome binary: %v", err)
-	}
-
-	// By convention, the first of these strings (i.e., argv[0]) should contain
-	// the filename associated with the file being executed
-	// (https://man7.org/linux/man-pages/man2/execve.2.html).
-	argv := []string{chrome}
-
+func run(configDir string, args []string) error {
 	// Read flags from $XDG_CONFIG_HOME/chrome-flags.conf and add them.
 	if bs, err := os.ReadFile(filepath.Join(configDir, "chrome-flags.conf")); err == nil {
 		flags := strings.Split(string(bs), "\n")
@@ -145,13 +141,23 @@ func run(binary, configDir string, args []string) error {
 				if flag == "" || strings.HasPrefix(flag, "#") {
 					continue
 				}
-				argv = append(argv, flag)
+				args = append(args, flag)
 			}
 		}
 	}
-	if len(args) > 0 {
-		argv = append(argv, args...)
+
+	// Start Chrome in a detached process.
+	chrome := exec.Command(*binary, args...)
+	chrome.Stdout = os.Stdout
+	chrome.Stderr = os.Stderr
+	if err := chrome.Start(); err != nil {
+		return err
 	}
 
-	return syscall.Exec(chrome, argv, os.Environ())
+	// Focus the window.
+	if _, err := focus(); err != nil {
+		return err
+	}
+
+	return nil
 }
