@@ -28,6 +28,7 @@ var (
 	openBookmarksBar = flag.Bool("bookmarks-bar", false, "Open everything in the bookmarks bar.")
 	i3Focus          = flag.Bool("i3-focus", true, "When running under i3, focus the current Chrome window if it's already running.")
 	binary           = flag.String("chrome-binary", "google-chrome-stable", "Chrome binary name.")
+	chromeFlags      = flag.String("chrome-flags", "", "Additional flags to pass to the Chrome binary.")
 )
 
 func main() {
@@ -142,6 +143,10 @@ func run(configDir string, args []string) error {
 				args = append(args, flag)
 			}
 		}
+	}
+
+	if *chromeFlags != "" {
+		args = append(args, strings.Fields(*chromeFlags)...)
 	}
 
 	// Start Chrome in a detached process.
