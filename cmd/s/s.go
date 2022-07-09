@@ -35,7 +35,8 @@ func main() {
 	errCh := make(chan error, 1)
 
 	go func() {
-		log.Printf("Listening on %s, serving %s", *addr, fullDir)
+		log.Printf("Serving %s on %s.", fullDir, *addr)
+		log.Printf("Use Ctrl+C to shut down the server.")
 		if err := srv.ListenAndServe(); err != nil {
 			errCh <- err
 		}
