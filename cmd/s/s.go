@@ -2,6 +2,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net/http"
@@ -9,12 +10,14 @@ import (
 	"os/signal"
 	"path/filepath"
 	"syscall"
+	"time"
 
 	"go.astrophena.name/exp/cmd"
 )
 
 func main() {
 	addr := flag.String("addr", "localhost:3000", "Listen on `host:port`.")
+	shutdownTimeout := flag.Duration("shutdown-timeout", 5*time.Second, "Graceful shutdown timeout.")
 	cmd.SetDescription("Simple HTTP server that serves files.")
 	cmd.SetArgsUsage("[dir]")
 	cmd.HandleStartup()
@@ -51,4 +54,8 @@ func main() {
 	case err := <-errCh:
 		log.Fatal(err)
 	}
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), *shutdownTimeout)
+	defer cancel()
+	srv.Shutdown(shutdownCtx)
 }
