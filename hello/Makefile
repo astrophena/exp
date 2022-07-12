@@ -1,5 +1,5 @@
 hello: hello.c
-	$(CC) -Wall hello.c -o hello -lm
+	$(CC) -Wall -Werror hello.c -o hello -lm
 
 clean:
 	rm hello

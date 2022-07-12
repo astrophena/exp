@@ -5,6 +5,15 @@
 #include <string.h>
 #include <unistd.h>
 
+typedef struct {
+  char* name;
+  int age;
+} person;
+
+void print_person(person* p) {
+  printf("Hello, %s! Your age is %d.\n", p->name, p->age);
+}
+
 int main(void) {
   // printf.
   char* message = "Hello, world!";
@@ -29,6 +38,13 @@ int main(void) {
     printf("Hostname is empty.\n");
   }
   free(hostname);
+
+  // Structs and functions.
+  person* example = malloc(sizeof(person));
+  example->name = "Ilya";
+  example->age = 21;
+  print_person(example);
+  free(example);
 
   return 0;
 }
