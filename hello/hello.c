@@ -5,14 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 
-typedef struct {
-  char* name;
-  int age;
-} person;
-
-void print_person(person* p) {
-  printf("Hello, %s! Your age is %d.\n", p->name, p->age);
-}
+#include "hello.h"
 
 int main(void) {
   // printf.
@@ -47,4 +40,8 @@ int main(void) {
   free(example);
 
   return 0;
+}
+
+void print_person(person* p) {
+  printf("Hello, %s! Your age is %d.\n", p->name, p->age);
 }
