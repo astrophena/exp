@@ -25,7 +25,8 @@ import (
 )
 
 var (
-	openBookmarksBar = flag.Bool("bookmarks-bar", false, "Open everything in the bookmarks bar.")
+	openBookmarksBar = flag.Bool("bookmarks-bar", false, "Open everything (or some bookmarks) from the bookmarks bar.")
+	bookmarksLimit   = flag.Int("bookmarks-limit", 0, "Open n first bookmarks. If 0, open everything.")
 	i3Focus          = flag.Bool("i3-focus", true, "When running under i3, focus the current Chrome window if it's already running.")
 	binary           = flag.String("chrome-binary", "google-chrome-stable", "Chrome binary name.")
 	chromeFlags      = flag.String("chrome-flags", "", "Additional flags to pass to the Chrome binary.")
@@ -57,7 +58,7 @@ func main() {
 		log.Fatalf("os.UserConfigDir(): %v", err)
 	}
 	if *openBookmarksBar {
-		args = getBookmarksBar(configDir)
+		args = getBookmarksBar(configDir, *bookmarksLimit)
 	}
 
 	if err := run(configDir, args); err != nil {
@@ -81,7 +82,7 @@ It launches Chrome with flags defined in $XDG_CONFIG_HOME/chrome-flags.conf
 	fmt.Fprintf(os.Stderr, "\nTo see Chrome flags, run 'man google-chrome'.\n")
 }
 
-func getBookmarksBar(configDir string) []string {
+func getBookmarksBar(configDir string, limit int) []string {
 	b, err := os.ReadFile(filepath.Join(configDir, "google-chrome", "Default", "Bookmarks"))
 	if err != nil {
 		log.Fatalf("failed to read the bookmarks file: %v", err)
@@ -90,7 +91,8 @@ func getBookmarksBar(configDir string) []string {
 	var bookmarks struct {
 		Roots map[string]struct {
 			Children []struct {
-				URL string `json:"url"`
+				URL  string `json:"url"`
+				Type string `json:"type"`
 			} `json:"children"`
 		} `json:"roots"`
 	}
@@ -104,9 +106,16 @@ func getBookmarksBar(configDir string) []string {
 
 	var urls []string
 	for _, bookmark := range bar.Children {
+		if bookmark.Type == "folder" {
+			continue
+		}
 		urls = append(urls, bookmark.URL)
 	}
-	return urls
+
+	if len(urls) <= limit {
+		return urls
+	}
+	return urls[:limit]
 }
 
 func focus() (launched bool, err error) {
