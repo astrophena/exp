@@ -52,13 +52,13 @@ func parseTitle(path string) (title string, err error) {
 
 func openPage(name string) error {
 	// https://vi.stackexchange.com/a/26735
-	vim := exec.Command(term, "vim", "-c", "VimwikiIndex", "-c", "VimwikiGoto "+strings.TrimSuffix(name, filepath.Ext(name)))
+	vim := exec.Command(term[0], term[1], "vim", "-c", "VimwikiIndex", "-c", "VimwikiGoto "+strings.TrimSuffix(name, filepath.Ext(name)))
 	vim.Env = os.Environ()
 	vim.Stderr = os.Stderr
 	return vim.Start()
 }
 
-const term = "kitty"
+var term = []string{"kitty", "--single-instance"}
 
 // https://regex101.com/r/00YyXk/2
 var spanRe = regexp.MustCompile(`\p{L}+\s+<span font_size="small">(.*?)</span>`)
